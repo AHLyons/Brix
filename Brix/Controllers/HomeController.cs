@@ -2,21 +2,41 @@ using Brix.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Brix.Models.ViewModels;
+using SQLitePCL;
 
 namespace Brix.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private ILegoStoreRepository _repo;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILegoStoreRepository temp)
         {
-            _logger = logger;
+            _repo = temp;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int pageNum)
         {
-            return View();
+            int pageSize = 10;
+
+            var blah = new LegosListViewModel
+            {
+                Legos = _repo.Legos
+                    .OrderBy(x => x.Title)
+                    .Skip((pageNum - 1) * pageSize)
+                    .Take(pageSize),
+
+                PaginationInfo = new PaginationInfo
+                {
+                    CurrentPage = pageNum,
+                    ItemsPerPage = pageSize,
+                    TotalItems = _repo.Legos.Count()
+                }
+
+            };
+
+            return View(blah);
         }
 
         public IActionResult Privacy()
@@ -35,5 +55,32 @@ namespace Brix.Controllers
         {
             return View();
         }
+
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        public IActionResult Cart()
+        {
+            return View();
+        }
+
+        public IActionResult FraudCheck()
+        {
+            return View();
+        }
+
+        public IActionResult ProductDetails()
+        {
+            return View();
+        }
+
+        public IActionResult Products()
+        {
+            return View();
+        }
+
+
     }
 }
