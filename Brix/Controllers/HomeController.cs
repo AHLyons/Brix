@@ -2,6 +2,7 @@ using Brix.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Brix.Models.ViewModels;
 
 namespace Brix.Controllers
 {
@@ -14,9 +15,27 @@ namespace Brix.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int pageNum)
         {
-            return View();
+            int pageSize = 10;
+
+            var blah = new LegosListViewModel
+            {
+                Legos = _repo.Legos
+                    .OrderBy(x => x.Title)
+                    .Skip((pageNum - 1) * pageSize)
+                    .Take(pageSize),
+
+                PaginationInfo = new PaginationInfo
+                {
+                    CurrentPage = pageNum,
+                    ItemsPerPage = pageSize,
+                    TotalItems = _repo.Legos.Count()
+                }
+
+            };
+
+            return View(blah);
         }
 
         public IActionResult Privacy()
@@ -60,5 +79,7 @@ namespace Brix.Controllers
         {
             return View();
         }
+
+
     }
 }
