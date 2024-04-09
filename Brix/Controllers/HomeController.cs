@@ -3,16 +3,17 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Brix.Models.ViewModels;
+using SQLitePCL;
 
 namespace Brix.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private ILegostoreRepository _repo;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILegostoreRepository temp)
         {
-            _logger = logger;
+            _repo = temp;
         }
 
         public IActionResult Index(int pageNum)
