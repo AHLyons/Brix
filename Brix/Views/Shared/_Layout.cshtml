@@ -41,11 +41,41 @@
         </main>
     </div>
 
+    <!-- Cookie Pop-up -->
+    <div id="cookie-popup" class="cookie-popup">
+        <p>This website uses cookies to ensure you get the best experience on our website.</p>
+        <button id="accept-cookies-btn">OK</button>
+    </div>
+
+
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - Brix - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var cookiePopup = document.getElementById("cookie-popup");
+            var acceptCookiesBtn = document.getElementById("accept-cookies-btn");
+
+            // Check if user has already accepted cookies
+            var acceptedCookies = localStorage.getItem("acceptedCookies");
+
+            if (!acceptedCookies) {
+                // Show cookie pop-up
+                cookiePopup.style.display = "block";
+            }
+
+            // Handle click event on accept cookies button
+            acceptCookiesBtn.addEventListener("click", function () {
+                // Set a cookie to remember user's preference
+                localStorage.setItem("acceptedCookies", "true");
+
+                // Hide cookie pop-up
+                cookiePopup.style.display = "none";
+            });
+        });
+    </script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
