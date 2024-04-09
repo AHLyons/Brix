@@ -9,9 +9,9 @@ namespace Brix.Controllers
 {
     public class HomeController : Controller
     {
-        private ILegostoreRepository _repo;
+        private ILegoStoreRepository _repo;
 
-        public HomeController(ILegostoreRepository temp)
+        public HomeController(ILegoStoreRepository temp)
         {
             _repo = temp;
         }

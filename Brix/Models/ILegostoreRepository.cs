@@ -1,6 +1,6 @@
 ﻿namespace Brix.Models
 {
-    public interface ILegostoreRepository
+    public interface ILegoStoreRepository
     {
         public IQueryable<Lego> Legos { get; }
     }

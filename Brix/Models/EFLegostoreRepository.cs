@@ -1,6 +1,6 @@
 ﻿namespace Brix.Models
 {
-    public class EFLegostoreRepository : ILegostoreRepository
+    public class EFLegostoreRepository : ILegoStoreRepository
     {
         private LegostoreContext _context;
 

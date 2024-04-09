@@ -63,27 +63,45 @@
         </div>
     </footer>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var cookiePopup = document.getElementById("cookie-popup");
-            var acceptCookiesBtn = document.getElementById("accept-cookies-btn");
+        // Function to set a cookie with a given name, value, and expiration
+        function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            var expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
 
-            // Check if user has already accepted cookies
-            var acceptedCookies = localStorage.getItem("acceptedCookies");
-
-            if (!acceptedCookies) {
-                // Show cookie pop-up
-                cookiePopup.style.display = "block";
+        // Function to get the value of a cookie by name
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
             }
+            return "";
+        }
 
-            // Handle click event on accept cookies button
-            acceptCookiesBtn.addEventListener("click", function () {
-                // Set a cookie to remember user's preference
-                localStorage.setItem("acceptedCookies", "true");
+        // Check if the cookie exists
+        var cookieAccepted = getCookie("cookies_accepted");
+        if (!cookieAccepted) {
+            // If the cookie doesn't exist, show the pop-up
+            document.getElementById("cookie-popup").style.display = "block";
 
-                // Hide cookie pop-up
-                cookiePopup.style.display = "none";
+            // Add event listener to the accept button
+            document.getElementById("accept-cookies-btn").addEventListener("click", function () {
+                // Set the cookie to indicate that the user has accepted the cookies
+                setCookie("cookies_accepted", "true", 365); // Cookie expires after 1 year
+                // Hide the pop-up
+                document.getElementById("cookie-popup").style.display = "none";
             });
-        });
+        }
     </script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
