@@ -5,21 +5,23 @@ namespace Brix.Models;
 
 public partial class Product
 {
-    public int LegoId { get; set; }
+    public int? ProductId { get; set; }
 
-    public string Title { get; set; } = null!;
+    public string? Name { get; set; }
 
-    public string Author { get; set; } = null!;
+    public int? Year { get; set; }
 
-    public string Publisher { get; set; } = null!;
+    public int? NumParts { get; set; }
 
-    public string Isbn { get; set; } = null!;
+    public int? Price { get; set; }
 
-    public string Classification { get; set; } = null!;
+    public string? ImgLink { get; set; }
 
-    public string Category { get; set; } = null!;
+    public string? PrimaryColor { get; set; }
 
-    public int PageCount { get; set; }
+    public string? SecondaryColor { get; set; }
 
-    public double Price { get; set; }
+    public string? Description { get; set; }
+
+    public string? Category { get; set; }
 }
