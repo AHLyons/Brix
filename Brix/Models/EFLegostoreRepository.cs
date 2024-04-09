@@ -9,6 +9,6 @@
             _context = temp;
         }
 
-        public IQueryable<Lego> Legos => _context.Legos;
+        public IQueryable<Product> Legos => _context.Legos;
     }
 }

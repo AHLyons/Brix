@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Brix.Models;
 
-public partial class Lego
+public partial class Product
 {
     public int LegoId { get; set; }
 

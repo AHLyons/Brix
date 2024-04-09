@@ -2,7 +2,7 @@
 {
     public class LegosListViewModel
     {
-        public IQueryable<Lego> Legos { get; set;}
+        public IQueryable<Product> Legos { get; set;}
 
         public PaginationInfo PaginationInfo { get; set;} = new PaginationInfo();
     }
