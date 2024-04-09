@@ -23,7 +23,7 @@ namespace Brix.Controllers
             var blah = new LegosListViewModel
             {
                 Legos = _repo.Legos
-                    .OrderBy(x => x.Title)
+                    .OrderBy(x => x.ProductId)
                     .Skip((pageNum - 1) * pageSize)
                     .Take(pageSize),
 

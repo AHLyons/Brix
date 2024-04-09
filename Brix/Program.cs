@@ -24,7 +24,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<LegostoreContext>(options =>
-    options.UseSqlite(connectionString)); // Reusing the connectionString variable
+    options.UseSqlServer(connectionString)); // Reusing the connectionString variable
 
 builder.Services.AddScoped<ILegoStoreRepository, EFLegostoreRepository>();
 

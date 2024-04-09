@@ -25,10 +25,10 @@ public partial class LegostoreContext : DbContext
     {
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasIndex(e => e.LegoId, "IX_Legos_LegoID").IsUnique();
+            entity.HasIndex(e => e.ProductId, "IX_Legos_LegoID").IsUnique();
 
-            entity.Property(e => e.LegoId).HasColumnName("LegoID");
-            entity.Property(e => e.Isbn).HasColumnName("ISBN");
+            entity.Property(e => e.ProductId).HasColumnName("LegoID");
+            //entity.Property(e => e.Isbn).HasColumnName("ISBN");
         });
 
         OnModelCreatingPartial(modelBuilder);
