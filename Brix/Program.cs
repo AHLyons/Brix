@@ -14,16 +14,13 @@ services.AddAuthentication().AddGoogle(googleOptions =>
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("BrixConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-//builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//    options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<IntexbrixContext>(options =>
+    options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<IntexbrixContext>();
 builder.Services.AddControllersWithViews();
-
-builder.Services.AddDbContext<IntexbrixContext>(options =>
-    options.UseSqlServer(connectionString)); // Reusing the connectionString variable
 
 builder.Services.AddScoped<ILegoStoreRepository, EFLegostoreRepository>();
 
@@ -47,7 +44,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(

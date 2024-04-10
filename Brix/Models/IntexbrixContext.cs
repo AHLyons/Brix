@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
 
 namespace Brix.Models;
 
@@ -14,14 +14,6 @@ public partial class IntexbrixContext : DbContext
     public IntexbrixContext(DbContextOptions<IntexbrixContext> options)
         : base(options)
     {
-    }
-
-    public class ApplicationDbContext : IdentityDbContext
-    {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
     }
 
     public virtual DbSet<Customer> Customers { get; set; }
