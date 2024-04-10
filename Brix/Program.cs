@@ -1,6 +1,7 @@
 using Brix.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.ML.OnnxRuntime;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -26,6 +27,10 @@ builder.Services.AddDbContext<IntexbrixContext>(options =>
     options.UseSqlServer(connectionString)); // Reusing the connectionString variable
 
 builder.Services.AddScoped<ILegoStoreRepository, EFLegostoreRepository>();
+
+services.AddSingleton<InferenceSession>(
+    new InferenceSession("C:\\Users\\autum\\Source\\Repos\\Brix\\Brix\\decision_tree_model-3.onnx")
+);
 
 var app = builder.Build();
 
