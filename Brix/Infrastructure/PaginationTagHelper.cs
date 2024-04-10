@@ -14,16 +14,18 @@ namespace Brix.Infrastructure
 
         public PaginationTagHelper (IUrlHelperFactory temp)
         {
-            urlHelperFactory = temp;
+            this.urlHelperFactory = temp;
         }
 
         [ViewContext]
         [HtmlAttributeNotBound]
         public ViewContext? ViewContext { get; set; }
         public string? PageAction { get; set; }
+        [HtmlAttributeName(DictionaryAttributePrefix = "page-url-")]
+        public Dictionary<string, object> PageUrlValues { get; set; } = new Dictionary<string, object>();
         public PaginationInfo PageModel { get; set; }
 
-        public bool PageClassesEnabled { get; set; } = false;
+        public bool PageClassEnabled { get; set; } = false;
         public string PageClass { get; set; } = String.Empty;
         public string PageClassNormal { get; set; } = String.Empty;
         public string PageClassSelected { get; set; } = String.Empty;
@@ -39,9 +41,11 @@ namespace Brix.Infrastructure
                 for (int i = 1; i <= PageModel.TotalNumPages; i++)
                 {
                     TagBuilder tag = new TagBuilder("a");
+                    PageUrlValues["pageNum"] = i;
+
                     tag.Attributes["href"] = urlHelper.Action(PageAction, new {pageNum = i});
 
-                    if (PageClassesEnabled)
+                    if (PageClassEnabled)
                     {
                         tag.AddCssClass(PageClass);
                         tag.AddCssClass(i == PageModel.CurrentPage ? PageClassSelected : PageClassNormal);

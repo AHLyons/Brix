@@ -2,6 +2,6 @@
 {
     public interface ILegoStoreRepository
     {
-        public IQueryable<Product> Legos { get; }
+        public IQueryable<Product> Products { get; }
     }
 }

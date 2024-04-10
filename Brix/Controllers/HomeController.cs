@@ -19,11 +19,15 @@ namespace Brix.Controllers
         public IActionResult Index(int pageNum)
         {
             int pageSize = 10;
+            if (pageNum < 1)
+            {
+                pageNum = 1;
+            }
 
             var blah = new LegosListViewModel
             {
-                Legos = _repo.Legos
-                    .OrderBy(x => x.Title)
+                Products = _repo.Products
+                    .OrderBy(x => x.ProductId)
                     .Skip((pageNum - 1) * pageSize)
                     .Take(pageSize),
 
@@ -31,7 +35,7 @@ namespace Brix.Controllers
                 {
                     CurrentPage = pageNum,
                     ItemsPerPage = pageSize,
-                    TotalItems = _repo.Legos.Count()
+                    TotalItems = _repo.Products.Count()
                 }
 
             };
