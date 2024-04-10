@@ -2,7 +2,14 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@model LegosListViewModel
+
+    <h1>Online Legostore</h1>
+
+
+         @foreach (Product l in Model.Products)
+    {
+        <partial name="Inventory" model="l" />
+    }
+
+<div page-model="@Model.PaginationInfo" page-action="Index" page-classes-enabled="true" page-class='btn' page-class-normal="btn-outline-dark" page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>

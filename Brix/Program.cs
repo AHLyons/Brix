@@ -1,4 +1,4 @@
-using Brix.Data;
+using Brix.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,14 +13,19 @@ services.AddAuthentication().AddGoogle(googleOptions =>
 });
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+var connectionString = builder.Configuration.GetConnectionString("BrixConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//    options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<IntexbrixContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<IntexbrixContext>(options =>
+    options.UseSqlServer(connectionString)); // Reusing the connectionString variable
+
+builder.Services.AddScoped<ILegoStoreRepository, EFLegostoreRepository>();
 
 var app = builder.Build();
 
@@ -41,14 +46,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
-
-//app.UseAuthentication();
-//app.UseAuthorization();
 
 app.Run();
