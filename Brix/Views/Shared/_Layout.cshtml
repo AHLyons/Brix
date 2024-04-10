@@ -3,6 +3,24 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy"
+          content="base-uri 'self';
+           default-src 'self';
+           img-src data: https:
+                         'self';
+           object-src 'none';
+           script-src https://stackpath.bootstrapcdn.com/
+                      'self'
+                      'sha256-v8ZC9OgMhcnEQ/Me77/R9TlJfzOBqrMTW8e1KuqLaqc='
+                      'sha256-If//FtbPc03afjLezvWHnC3Nbu4fDM04IIzkPaf3pH0='
+                      'sha256-v8v3RKRPmN4odZ1CWM5gw80QKPCCWMcpNeOmimNL2AA='
+                      'unsafe-eval';
+           font-src fonts.gstatic.com;
+           style-src https://stackpath.bootstrapcdn.com/
+                     fonts.googleapis.com
+                     'self'
+                     'unsafe-inline';
+           upgrade-insecure-requests;">
     <title>@ViewData["Title"] - Brix</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
