@@ -1,4 +1,3 @@
-using Brix.Data;
 using Brix.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -20,10 +19,10 @@ var connectionString = builder.Configuration.GetConnectionString("BrixConnection
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<IntexbrixContext>();
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<LegostoreContext>(options =>
+builder.Services.AddDbContext<IntexbrixContext>(options =>
     options.UseSqlServer(connectionString)); // Reusing the connectionString variable
 
 builder.Services.AddScoped<ILegoStoreRepository, EFLegostoreRepository>();

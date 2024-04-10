@@ -2,13 +2,13 @@
 {
     public class EFLegostoreRepository : ILegoStoreRepository
     {
-        private LegostoreContext _context;
+        private IntexbrixContext _context;
 
-        public EFLegostoreRepository(LegostoreContext temp) 
+        public EFLegostoreRepository(IntexbrixContext temp) 
         { 
             _context = temp;
         }
 
-        public IQueryable<Product> Legos => _context.Legos;
+        public IQueryable<Product> Products => _context.Products;
     }
 }
