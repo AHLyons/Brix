@@ -2,3 +2,27 @@
     ViewData["Title"] = "Products";
 }
 <h1>@ViewData["Title"]</h1>
+
+@model LegosListViewModel
+
+<div class="products">
+    @foreach (var product in Model.Products)
+    {
+        <div class="product-card">
+            <a asp-controller="Home" asp-action="ProductDetails" asp-route-id="@product.ProductId">
+                @if (product.ImgLink != null)
+                {
+                    <img src="@product.ImgLink" alt="Product Image" style="max-width: 200px; max-height: 200px;" />
+                }
+                else
+                {
+                    <div class="placeholder-image">No Image Available</div>
+                }
+                <h3>@product.Name</h3>
+            </a>
+            <p>$@product.Price</p>
+        </div>
+    }
+
+
+</div>
