@@ -1,21 +1,4 @@
-﻿@* @using Brix.Models
-@model NewProduct
-<h1>Add A Product To The Collection</h1>
-<form method="post">
-    <input type="hidden" asp-for="ProductId" />
-
-    <select asp-for="CategoryID" />
-    <option value="">Select a Category</option>
-    @foreach (Category c in ViewBag.Categories)
-    {
-        <option value="@c.CategoryId">@c.CategoryName</option>
-    }
-    </select>
-    <br />
-    <br /> *@
-  
-
-@* <div class="container container-form">
+﻿@* <div class="container container-form">
     <!-- Add a container to center the grid -->
     <div class="row justify-content-center">
         <!-- Use justify-content-center to center the column -->
