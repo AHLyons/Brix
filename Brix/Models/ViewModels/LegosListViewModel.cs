@@ -1,9 +1,16 @@
-﻿namespace Brix.Models.ViewModels
-{
-    public class LegosListViewModel
-    {
-        public IQueryable<Product> Products { get; set;}
+﻿// In LegoListViewModel.cs
+using System.Collections.Generic;
 
-        public PaginationInfo PaginationInfo { get; set;} = new PaginationInfo();
-    }
+namespace Brix.Models.ViewModels;
+
+public class LegosListViewModel
+{
+    public IQueryable<Product> Products { get; set; }
+    public PaginationInfo PaginationInfo { get; set; } = new PaginationInfo();
+    public string CurrentCategory { get; set; }
+    public string CurrentColor { get; set; }
+    public int PageSize { get; set; }
+    // Add these lists
+    public List<string> Categories { get; set; } = new List<string>();
+    public List<string> PrimaryColors { get; set; } = new List<string>();
 }
