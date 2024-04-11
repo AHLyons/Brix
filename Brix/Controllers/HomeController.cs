@@ -15,11 +15,11 @@ namespace Brix.Controllers
 {
     public class HomeController : Controller
     {
-        private ILegoStoreRepository _repo;
+        private ILegostoreRepository _repo;
         private readonly InferenceSession _session;
         private readonly string _onnxModelPath;
 
-        public HomeController(ILegoStoreRepository temp, InferenceSession session, IHostEnvironment hostEnvironment)
+        public HomeController(ILegostoreRepository temp, InferenceSession session, IHostEnvironment hostEnvironment)
         {
             _repo = temp;
             _session = session;
@@ -44,32 +44,32 @@ namespace Brix.Controllers
             }
         }
 
-        //public IActionResult Index(int pageNum)
-        //{
-        //    int pageSize = 10;
-        //    if (pageNum < 1)
-        //    {
-        //        pageNum = 1;
-        //    }
+        public IActionResult Index(int pageNum)
+        {
+            int pageSize = 10;
+            if (pageNum < 1)
+            {
+                pageNum = 1;
+            }
 
-        //    var blah = new LegosListViewModel
-        //    {
-        //        Products = _repo.Products
-        //            .OrderBy(x => x.ProductId)
-        //            .Skip((pageNum - 1) * pageSize)
-        //            .Take(pageSize),
+            var blah = new LegosListViewModel
+            {
+                Products = _repo.Products
+                    .OrderBy(x => x.ProductId)
+                    .Skip((pageNum - 1) * pageSize)
+                    .Take(pageSize),
 
-        //        PaginationInfo = new PaginationInfo
-        //        {
-        //            CurrentPage = pageNum,
-        //            ItemsPerPage = pageSize,
-        //            TotalItems = _repo.Products.Count()
-        //        }
+                PaginationInfo = new PaginationInfo
+                {
+                    CurrentPage = pageNum,
+                    ItemsPerPage = pageSize,
+                    TotalItems = _repo.Products.Count()
+                }
 
-        //    };
+            };
 
-        //    return View(blah);
-        //}
+            return View(blah);
+        }
 
         public IActionResult FraudCheck()
         {

@@ -13,6 +13,8 @@ namespace Brix.Models
         }
 
         public IQueryable<Product> Products => _context.Products;
+        public IQueryable<Order> Orders => _context.Orders;
+        public IQueryable<FraudPrediction> FraudPredictions => _context.FraudPredictions;
 
         // Add a new product to the database
         public async Task NewProduct(Product product)

@@ -37,14 +37,14 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     //options.ConsentCookieValue = "true";
 });
 
-//services.AddSingleton<InferenceSession>(
-//    new InferenceSession("C:\\Users\\autum\\Source\\Repos\\Brix\\Brix\\decision_tree_model-3.onnx")
-//);
+services.AddSingleton<InferenceSession>(
+    new InferenceSession(".\\decision_tree_model-3.onnx")
+);
 
 services.AddSingleton<InferenceSession>(provider =>
 {
     // Provide the path to the ONNX model file
-    string modelPath = "C:\\Users\\autum\\Source\\Repos\\Brix\\Brix\\decision_tree_model-3.onnx";
+    string modelPath = ".\\decision_tree_model-3.onnx";
     return new InferenceSession(modelPath);
 });
 

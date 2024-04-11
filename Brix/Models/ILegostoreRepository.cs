@@ -7,7 +7,6 @@ namespace Brix.Models
         public IQueryable<Product> Products { get; }
         public IQueryable<Order> Orders { get; }
         public IQueryable<FraudPrediction> FraudPredictions { get; }
-        IQueryable<Product> Products { get; }
 
         // Method to add a new product
         Task NewProduct(Product product);
