@@ -9,9 +9,9 @@ namespace Brix.Controllers
 {
     public class HomeController : Controller
     {
-        private ILegoStoreRepository _repo;
+        private ILegostoreRepository _repo;
 
-        public HomeController(ILegoStoreRepository temp)
+        public HomeController(ILegostoreRepository temp)
         {
             _repo = temp;
         }
@@ -70,6 +70,38 @@ namespace Brix.Controllers
             return View();
         }
 
+        //public IActionResult AEDProduct()
+        //{
+        //    var products = _repo.Products.ToList(); // Assuming _repo.Products is an IQueryable<Product>
+        //    return View(products);
+        //}
+
+        [HttpGet]
+        public IActionResult NewProduct()
+        {
+            return View(new Product()); // Returns an empty form
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> NewProduct(Product product) // Mark this method as async
+        {
+            if (ModelState.IsValid)
+            {
+                await _repo.NewProduct(product); // Await the async NewProduct method
+
+                return RedirectToAction("AEDProduct"); // Redirect to the AEDProduct view
+            }
+            return View(product);
+        }
+
+        public IActionResult AEDProduct()
+        {
+            var products = _repo.Products.ToList();
+            return View(products);
+        }
+
+
+
         public IActionResult FraudCheck()
         {
             return View();
@@ -92,9 +124,6 @@ namespace Brix.Controllers
             return View(product);
         }
 
-
-        // In HomeController.cs
-        // In HomeController.cs
         public IActionResult Products(int pageNum, string category, string color, int pageSize = 10)
         {
             if (pageNum < 1)
@@ -140,22 +169,92 @@ namespace Brix.Controllers
         }
 
 
-        [HttpPost]
-        public IActionResult NewProduct(Product product)
-        {
-            if (ModelState.IsValid)
-            {
-                _repo.NewProduct(product);
-                return RedirectToAction("Index");
-            }
-            return View("Products", _repo.Products);
-        }
+        //[HttpPost]
+        //public IActionResult NewProduct(Product product)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _repo.NewProduct(product);
+        //        return RedirectToAction("Index");
+        //    }
+        //    return View("Products", _repo.Products);
+        //}
 
 
 
         public IActionResult OrderConfirmation()
         {
             return View();
+        }
+
+        //[HttpPost]
+        //public IActionResult NewProduct(Product product)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _repo.NewProduct(product);
+        //        return RedirectToAction("Index");
+        //    }
+        //    return View(product);
+        //}
+
+        public IActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = _repo.Products.FirstOrDefault(p => p.ProductId == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, Product product)
+        {
+            if (id != product.ProductId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _repo.UpdateProduct(product); // Ensure this method is implemented in the repository
+                return RedirectToAction(nameof(Index));
+            }
+            return View(product);
+        }
+
+        public IActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = _repo.Products.FirstOrDefault(p => p.ProductId == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var product = _repo.Products.FirstOrDefault(p => p.ProductId == id);
+            if (product != null)
+            {
+                _repo.DeleteProduct(product); // Ensure this method is implemented in the repository
+            }
+            return RedirectToAction(nameof(Index));
         }
 
     }

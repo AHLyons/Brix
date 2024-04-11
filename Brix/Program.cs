@@ -24,7 +24,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<BrixIdentityDbContext>();
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddScoped<ILegoStoreRepository, EFLegostoreRepository>();
+builder.Services.AddScoped<ILegostoreRepository, EFLegostoreRepository>();
 
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
