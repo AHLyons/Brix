@@ -98,6 +98,10 @@ namespace Brix.Controllers
             return View();
         }
 
+        public IActionResult OrderConfirmation()
+        {
+            return View();
+        }
 
     }
 }

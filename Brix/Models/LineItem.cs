@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Brix.Models;
 
 public partial class LineItem
 {
+    [Key]
     public int? TransactionId { get; set; }
 
     public int? ProductId { get; set; }

@@ -2,11 +2,17 @@
     ViewData["Title"] = "Home Page";
 }
 
+<body>
+    <div class="container">
+        <partial name="_CookieConsentPartial" />
+        <main role="main" class="pb-3">
+        </main>
+    </div>
 
 <img src="~/lib/masterbuilders.png" alt="Master Builders" />
 <h1>Welcome, Master Builders</h1>
 
-<p>Recommended For You:</p>
+<h3>Recommended For You:</h3>
 
 @model LegosListViewModel
 
@@ -32,4 +38,9 @@
 
 </div>
 
+
+
 <div page-model="@Model.PaginationInfo" page-action="Index" page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark" page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>
+
+
+</body>
