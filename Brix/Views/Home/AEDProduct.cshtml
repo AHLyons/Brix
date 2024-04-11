@@ -1,4 +1,4 @@
-﻿@* @model List<NewProduct>
+﻿@model IEnumerable<Product>
 
 <table class="table table-bordered">
     <thead class="fw-bold">
@@ -18,7 +18,7 @@
     {
         <tbody>
             <tr>
-                <td>@m.Name?.CategoryName</td>
+                <td>@m.Name</td>
                 <td>@m.Year</td>
                 <td>@m.NumParts</td>
                 <td>@m.ImgLink</td>
@@ -34,4 +34,4 @@
         </tbody>
     }
 
-</table> *@
+</table>

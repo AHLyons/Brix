@@ -140,6 +140,18 @@ namespace Brix.Controllers
         }
 
 
+        [HttpPost]
+        public IActionResult NewProduct(Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                _repo.NewProduct(product);
+                return RedirectToAction("Index");
+            }
+            return View("Products", _repo.Products);
+        }
+
+
 
         public IActionResult OrderConfirmation()
         {
