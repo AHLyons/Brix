@@ -10,5 +10,7 @@
         }
 
         public IQueryable<Product> Products => _context.Products;
+        public IQueryable<Order> Orders => _context.Orders;
+        public IQueryable<FraudPrediction> FraudPredictions => _context.FraudPredictions;
     }
 }

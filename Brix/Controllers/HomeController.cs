@@ -9,65 +9,74 @@ using Microsoft.ML;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using Microsoft.EntityFrameworkCore;
 using Elfie.Serialization;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Brix.Controllers
 {
     public class HomeController : Controller
     {
         private ILegoStoreRepository _repo;
-        private InferenceSession _session;
-        private ILogger<HomeController> _logger;
-        private BrixDatabaseContext _context;
+        private readonly InferenceSession _session;
+        private readonly string _onnxModelPath;
 
-        public HomeController(ILegoStoreRepository temp, ILogger<HomeController> logger, InferenceSession session, BrixDatabaseContext context)
+        public HomeController(ILegoStoreRepository temp, InferenceSession session, IHostEnvironment hostEnvironment)
         {
             _repo = temp;
-            _logger = logger;
             _session = session;
-            _context = context;
+
+            _onnxModelPath = System.IO.Path.Combine(hostEnvironment.ContentRootPath, "decision_tree_model-3.onnx");
+            System.IO.Path.Combine(hostEnvironment.ContentRootPath, "decision_tree_model-3.onnx");
+
+            _session = new InferenceSession(_onnxModelPath);
+
+
 
             try
             {
-                _session = new InferenceSession("C:\\Users\\autum\\Source\\Repos\\Brix\\Brix\\decision_tree_model-3.onnx");
-                _logger.LogInformation("ONNX model loaded successfully.");
+                _session = new InferenceSession("./decision_tree_model-3.onnx");
+                //_logger.LogInformation("ONNX model loaded successfully.");
+                Console.WriteLine("ONNX model loaded successfully.");
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error loading the ONNX model: {ex.Message}");
+                //_logger.LogError($"Error loading the ONNX model: {ex.Message}");
+                Console.WriteLine($"Error loading the ONNX model: {ex.Message}");
             }
-            _context = context;
         }
 
-        public IActionResult Index(int pageNum)
+        //public IActionResult Index(int pageNum)
+        //{
+        //    int pageSize = 10;
+        //    if (pageNum < 1)
+        //    {
+        //        pageNum = 1;
+        //    }
+
+        //    var blah = new LegosListViewModel
+        //    {
+        //        Products = _repo.Products
+        //            .OrderBy(x => x.ProductId)
+        //            .Skip((pageNum - 1) * pageSize)
+        //            .Take(pageSize),
+
+        //        PaginationInfo = new PaginationInfo
+        //        {
+        //            CurrentPage = pageNum,
+        //            ItemsPerPage = pageSize,
+        //            TotalItems = _repo.Products.Count()
+        //        }
+
+        //    };
+
+        //    return View(blah);
+        //}
+
+        public IActionResult FraudCheck()
         {
-            int pageSize = 10;
-            if (pageNum < 1)
-            {
-                pageNum = 1;
-            }
-
-            var blah = new LegosListViewModel
-            {
-                Products = _repo.Products
-                    .OrderBy(x => x.ProductId)
-                    .Skip((pageNum - 1) * pageSize)
-                    .Take(pageSize),
-
-                PaginationInfo = new PaginationInfo
-                {
-                    CurrentPage = pageNum,
-                    ItemsPerPage = pageSize,
-                    TotalItems = _repo.Products.Count()
-                }
-
-            };
-
-            return View(blah);
-        }
-
-        public IActionResult ShowPredictions()
-        {
-            var records = _context.Orders.ToList();  // Fetch all records
+            var records = _repo.Orders
+                .OrderByDescending(x => x.Date)
+                .Take(20)
+                .ToList();  // Fetch all records
             var predictions = new List<FraudPrediction>();  // Your ViewModel for the view
 
             // Dictionary mapping the numeric prediction to an animal type
@@ -79,38 +88,39 @@ namespace Brix.Controllers
 
             foreach (var record in records)
             {
-                var input = new List<string>
+                var input = new List<float>
                 {
-                    record.Date.ToString(),
-                    record.Time.ToString(),
-                    record.Amount.ToString(),
-                    record.DayOfWeek == "Mon" ? "1" : "0",
-                    record.DayOfWeek == "Sat" ? "1" : "0",
-                    record.DayOfWeek == "Sun" ? "1" : "0",
-                    record.DayOfWeek == "Thu" ? "1" : "0",
-                    record.DayOfWeek == "Tue" ? "1" : "0",
-                    record.DayOfWeek == "Wed" ? "1" : "0",
-                    record.EntryMode == "PIN" ? "1" : "0",
-                    record.EntryMode == "Tap" ? "1" : "0",
-                    record.TypeOfTransaction == "Online" ? "1" : "0",
-                    record.TypeOfTransaction == "POS" ? "1" : "0",
-                    record.CountryOfTransaction == "India" ? "1" : "0",
-                    record.CountryOfTransaction == "Russia" ? "1" : "0",
-                    record.CountryOfTransaction == "USA" ? "1" : "0",
-                    record.CountryOfTransaction == "United Kingdom" ? "1" : "0",
-                    record.ShippingAddress == "India" ? "1" : "0",
-                    record.ShippingAddress == "Russia" ? "1" : "0",
-                    record.ShippingAddress == "USA" ? "1" : "0",
-                    record.ShippingAddress == "United Kingdom" ? "1" : "0",
-                    record.Bank == "HSBC" ? "1" : "0",
-                    record.Bank == "Halifax" ? "1" : "0",
-                    record.Bank == "Lloyds" ? "1" : "0",
-                    record.Bank == "Metro" ? "1" : "0",
-                    record.Bank == "Monzo" ? "1" : "0",
-                    record.Bank == "RBS" ? "1" : "0",
-                    record.TypeOfCard == "Visa" ? "1" : "0"
+                    (float)record.Date,
+                    (float)record.Time,
+                    (float)record.Amount,
+                    1,
+                    record.DayOfWeek == "Mon" ? 1 : 0,
+                    record.DayOfWeek == "Sat" ? 1 : 0,
+                    record.DayOfWeek == "Sun" ? 1 : 0,
+                    record.DayOfWeek == "Thu" ? 1 : 0,
+                    record.DayOfWeek == "Tue" ? 1 : 0,
+                    record.DayOfWeek == "Wed" ? 1 : 0,
+                    record.EntryMode == "PIN" ? 1 : 0,
+                    record.EntryMode == "Tap" ? 1 : 0,
+                    record.TypeOfTransaction == "Online" ? 1 : 0,
+                    record.TypeOfTransaction == "POS" ? 1 : 0,
+                    record.CountryOfTransaction == "India" ? 1 : 0,
+                    record.CountryOfTransaction == "Russia" ? 1 : 0,
+                    record.CountryOfTransaction == "USA" ? 1 : 0,
+                    record.CountryOfTransaction == "United Kingdom" ? 1 : 0,
+                    record.ShippingAddress == "India" ? 1 : 0,
+                    record.ShippingAddress == "Russia" ? 1 : 0,
+                    record.ShippingAddress == "USA" ? 1 : 0,
+                    record.ShippingAddress == "United Kingdom" ? 1 : 0,
+                    record.Bank == "HSBC" ? 1 : 0,
+                    record.Bank == "Halifax" ? 1 : 0,
+                    record.Bank == "Lloyds" ? 1 : 0,
+                    record.Bank == "Metro" ? 1 : 0,
+                    record.Bank == "Monzo" ? 1 : 0,
+                    record.Bank == "RBS" ? 1 : 0,
+                    record.TypeOfCard == "Visa" ? 1 : 0
                 };
-                var inputTensor = new DenseTensor<string>(input.ToArray(), new[] { 1, input.Count });
+                var inputTensor = new DenseTensor<float>(input.ToArray(), new[] { 1, input.Count });
 
                 var inputs = new List<NamedOnnxValue>
                {
@@ -124,7 +134,7 @@ namespace Brix.Controllers
                     predictionResult = prediction != null && prediction.Length > 0 ? fraud_dict.GetValueOrDefault((int)prediction[0], "Unknown") : "Error in prediction";
                 }
 
-                predictions.Add(new FraudPrediction { Fraud = record, Prediction = predictionResult }); // Adds the fraud information and prediction for that fraud to FraudPrediction viewmodel
+                predictions.Add(new FraudPrediction { Orders = record, Prediction = predictionResult }); // Adds the fraud information and prediction for that fraud to FraudPrediction viewmodel
             }
 
             return View(predictions);
@@ -157,10 +167,10 @@ namespace Brix.Controllers
             return View();
         }
 
-        public IActionResult FraudCheck()
-        {
-            return View();
-        }
+        //public IActionResult FraudCheck()
+        //{
+        //    return View();
+        //}
 
         public IActionResult ProductDetails(int? id)
         {

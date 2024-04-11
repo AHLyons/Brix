@@ -60,18 +60,19 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Fraud.CustomerId</td>
-                    <td>@item.Fraud.Date</td>
-                    <td>@item.Fraud.DayOfWeek</td>
-                    <td>@item.Fraud.Time</td>
-                    <td>@item.Fraud.EntryMode</td>
-                    <td>@item.Fraud.Amount</td>
-                    <td>@item.Fraud.TypeOfTransaction</td>
-                    <td>@item.Fraud.CountryOfTransaction</td>
-                    <td>@item.Fraud.ShippingAddress</td>
-                    <td>@item.Fraud.Bank</td>
-                    <td>@item.Fraud.TypeOfCard</td>
-                    <td>@FraudDict[@item.Fraud.Fraud]</td>
+                    <td>@item.Orders.CustomerId</td>
+                    <td>@item.Orders.Date</td>
+                    <td>@item.Orders.DayOfWeek</td>
+                    <td>@item.Orders.Time</td>
+                    <td>@item.Orders.EntryMode</td>
+                    <td>@item.Orders.Amount</td>
+                    <td>@item.Orders.TypeOfTransaction</td>
+                    <td>@item.Orders.CountryOfTransaction</td>
+                    <td>@item.Orders.ShippingAddress</td>
+                    <td>@item.Orders.Bank</td>
+                    <td>@item.Orders.TypeOfCard</td>
+@*                     <td>@item.Orders.Fraud</td> *@
+@*                  <td>@FraudDict[@item.Fraud.Fraud]</td> *@
                     <td class="prediction-cell">@item.Prediction</td>
                 </tr>
             }
