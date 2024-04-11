@@ -23,36 +23,46 @@ namespace Brix.Controllers
             _context = context;
             _logger = logger;
             _session = session;
-        }
 
-        public IActionResult Index(int pageNum)
-        {
-            int pageSize = 10;
-            if (pageNum < 1)
+            try
             {
-                pageNum = 1;
+                _session = new InferenceSession("C:/Users/carte/Documents-Local/ZooC#/Zoo/decision_tree_model.onnx");
+                _logger.LogInformation("ONNX model loaded successfully.");
             }
-
-            var blah = new LegosListViewModel
+            catch (Exception ex)
             {
-                Products = _repo.Products
-                    .OrderBy(x => x.ProductId)
-                    .Skip((pageNum - 1) * pageSize)
-                    .Take(pageSize),
-
-                PaginationInfo = new PaginationInfo
-                {
-                    CurrentPage = pageNum,
-                    ItemsPerPage = pageSize,
-                    TotalItems = _repo.Products.Count()
-                }
-
-            };
-
-            return View(blah);
+                _logger.LogError($"Error loading the ONNX model: {ex.Message}");
+            }
         }
 
-        [HttpPost]
+        //public IActionResult Index(int pageNum)
+        //{
+        //    int pageSize = 10;
+        //    if (pageNum < 1)
+        //    {
+        //        pageNum = 1;
+        //    }
+
+        //    var blah = new LegosListViewModel
+        //    {
+        //        Products = _repo.Products
+        //            .OrderBy(x => x.ProductId)
+        //            .Skip((pageNum - 1) * pageSize)
+        //            .Take(pageSize),
+
+        //        PaginationInfo = new PaginationInfo
+        //        {
+        //            CurrentPage = pageNum,
+        //            ItemsPerPage = pageSize,
+        //            TotalItems = _repo.Products.Count()
+        //        }
+
+        //    };
+
+        //    return View(blah);
+            //}
+
+[HttpPost]
         public IActionResult Predict(int date, int time, float amount, string day_of_week, string entry_mode, string type_of_transaction, string country_of_transaction, string shipping_address, string bank, string type_of_card)
         {
             var fraud_dict = new Dictionary<int, string>
@@ -64,17 +74,17 @@ namespace Brix.Controllers
             try
             {
                 var input = new List<string> {
-            date.ToString(), // Convert integers to strings
-            time.ToString(), // Convert integers to strings
-            amount.ToString(), // Convert float to string
-            day_of_week,
-            entry_mode,
-            type_of_transaction,
-            country_of_transaction,
-            shipping_address,
-            bank,
-            type_of_card
-            };
+                    date.ToString(), // Convert integers to strings
+                    time.ToString(), // Convert integers to strings
+                    amount.ToString(), // Convert float to string
+                    day_of_week,
+                    entry_mode,
+                    type_of_transaction,
+                    country_of_transaction,
+                    shipping_address,
+                    bank,
+                    type_of_card
+                };
                 var inputTensor = new DenseTensor<string>(input.ToArray(), new[] { 1, input.Count });
 
                 var inputs = new List<NamedOnnxValue>
@@ -105,7 +115,7 @@ namespace Brix.Controllers
                 ViewBag.Prediction = "Error during prediction.";
             }
 
-            return View("Index");
+            return View("Checkout");
         }
 
         public IActionResult ShowPredictions()
@@ -205,6 +215,10 @@ namespace Brix.Controllers
             return View();
         }
 
+        public IActionResult Checkout()
+        {
+            return View();
+        }
         public IActionResult ProductDetails()
         {
             return View();

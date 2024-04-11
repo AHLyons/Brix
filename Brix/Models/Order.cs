@@ -27,5 +27,5 @@ public partial class Order
 
     public string? TypeOfCard { get; set; }
 
-    public int? Fraud { get; set; }
+    public int Fraud { get; set; }
 }
