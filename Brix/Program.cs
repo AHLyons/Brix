@@ -1,4 +1,5 @@
 using Brix.Models;
+using Brix.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +46,8 @@ using Microsoft.EntityFrameworkCore;
             options.MinimumSameSitePolicy = SameSiteMode.None;
             //options.ConsentCookieValue = "true";
         });
+
+        builder.Services.AddScoped<IEmailSenderService>
 
         var app = builder.Build();
 
@@ -94,7 +97,7 @@ using Microsoft.EntityFrameworkCore;
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
             string email = "admin@admin.com";
-            string password = "Test1234,"
+            string password = "Test1234,";
 
             if(await userManager.FindByEmailAsync(email) == null)
             {
