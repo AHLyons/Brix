@@ -27,6 +27,16 @@ builder.Services.AddDbContext<IntexbrixContext>(options =>
 
 builder.Services.AddScoped<ILegoStoreRepository, EFLegostoreRepository>();
 
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    // This lambda determines whether user consent for non-essential 
+    // cookies is needed for a given request.
+    options.CheckConsentNeeded = context => true;
+
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.ConsentCookieValue = "true";
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -43,6 +53,8 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseCookiePolicy();
 
 app.UseRouting();
 
