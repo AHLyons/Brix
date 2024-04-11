@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Brix.Migrations.BrixDatabase
 {
     [DbContext(typeof(BrixDatabaseContext))]
-    [Migration("20240411044616_CreateOtherSchemas")]
-    partial class CreateOtherSchemas
+    [Migration("20240411154037_RetryingSchemas")]
+    partial class RetryingSchemas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
