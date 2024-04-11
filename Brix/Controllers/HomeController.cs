@@ -75,10 +75,23 @@ namespace Brix.Controllers
             return View();
         }
 
-        public IActionResult ProductDetails()
+        public IActionResult ProductDetails(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = _repo.Products.FirstOrDefault(p => p.ProductId == id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
         }
+
 
         public IActionResult Products()
         {
@@ -89,5 +102,6 @@ namespace Brix.Controllers
         {
             return View();
         }
+
     }
 }

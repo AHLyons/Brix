@@ -1,0 +1,61 @@
+﻿@* @using Brix.Models
+@model NewProduct
+<h1>Add A Product To The Collection</h1>
+<form method="post">
+    <input type="hidden" asp-for="ProductId" />
+
+    <select asp-for="CategoryID" />
+    <option value="">Select a Category</option>
+    @foreach (Category c in ViewBag.Categories)
+    {
+        <option value="@c.CategoryId">@c.CategoryName</option>
+    }
+    </select>
+    <br />
+    <br /> *@
+  
+
+<div class="container container-form">
+    <!-- Add a container to center the grid -->
+    <div class="row justify-content-center">
+        <!-- Use justify-content-center to center the column -->
+        <div class="col-lg-6">
+            <!-- Specify the column size -->
+            <h1>Input a Product!</h1>
+            <div>
+                <form method="post">
+                    <input type="hidden" asp-for="ProductId" />
+                    <label asp-for="ImgLink">Link to Image :</label>
+                    <input asp-for="ImgLink" /><br /><br />
+
+                    <label asp-for="Name">Product Name :</label>
+                    <input asp-for="Name" /><br /><br />
+
+                    <label asp-for="Price">Price :</label>
+                    <input asp-for="Price" /><br /><br />
+
+                    <label asp-for="Category">Category :</label>
+                    <input asp-for="Category" /><br /><br />
+
+                    <label asp-for="Year">Year :</label>
+                    <input asp-for="Year" type="date" />
+                    <br /><br />
+
+                    <label asp-for="NumParts">Number of Parts :</label>
+                    <input asp-for="NumParts" /><br /><br />
+
+                    <label asp-for="PrimaryColor">Primary Color :</label>
+                    <input asp-for="PrimaryColor" /><br /><br />
+
+                    <label asp-for="SecondaryColor">Secondary Color :</label>
+                    <input asp-for="SecondaryColor" /><br /><br />
+
+                    <label asp-for="Description">Description :</label>
+                    <input asp-for="Description" /><br /><br />
+
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

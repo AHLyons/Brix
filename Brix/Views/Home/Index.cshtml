@@ -2,14 +2,45 @@
     ViewData["Title"] = "Home Page";
 }
 
+<body>
+    <div class="container">
+        <partial name="_CookieConsentPartial" />
+        <main role="main" class="pb-3">
+        </main>
+    </div>
+
+<img src="~/lib/masterbuilders.png" alt="Master Builders" />
+<h1>Welcome, Master Builders</h1>
+
+<h3>Recommended For You:</h3>
+
 @model LegosListViewModel
 
-    <h1>Online Legostore</h1>
-
-
-         @foreach (Product l in Model.Products)
+<div class="products">
+    @foreach (var product in Model.Products)
     {
-        <partial name="Inventory" model="l" />
+        <div class="product-card">
+            <a asp-controller="Home" asp-action="ProductDetails" asp-route-id="@product.ProductId">
+                @if (product.ImgLink != null)
+                {
+                    <img src="@product.ImgLink" alt="Product Image" style="max-width: 200px; max-height: 200px;" />
+                }
+                else
+                {
+                    <div class="placeholder-image">No Image Available</div>
+                }
+                <h3>@product.Name</h3>
+            </a>
+            <p>$@product.Price</p>
+        </div>
     }
 
-<div page-model="@Model.PaginationInfo" page-action="Index" page-classes-enabled="true" page-class='btn' page-class-normal="btn-outline-dark" page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>
+
+</div>
+
+
+
+<div page-model="@Model.PaginationInfo" page-action="Index" page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark" page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>
+
+
+</body>

@@ -1,4 +1,48 @@
 ﻿@{
-    ViewData["Title"] = "Product-Details";
+    ViewData["Title"] = "Product Details";
 }
+
+@model Brix.Models.Product
+
 <h1>@ViewData["Title"]</h1>
+
+<div class="product-view">
+    <div class="product-image">
+        @if (Model.ImgLink != null)
+        {
+            <img src="@Model.ImgLink" alt="Product Image" style="max-width: 400px; max-height: 400px;">
+        }
+        else
+        {
+            <div class="placeholder-image">Insert Product Image Here</div>
+        }
+    </div>
+
+    <div class="product-details">
+        <h1>@Model.Name</h1>
+        <h2>Price: $@Model.Price</h2>
+        <p>@Model.Description</p>
+
+        <dl>
+            <dt>Year</dt>
+            <dd>@Model.Year</dd>
+
+            <dt>Number of Parts</dt>
+            <dd>@Model.NumParts</dd>
+
+            <dt>Primary Color</dt>
+            <dd>@Model.PrimaryColor</dd>
+
+            <dt>Secondary Color</dt>
+            <dd>@Model.SecondaryColor</dd>
+
+            <dt>Category</dt>
+            <dd>@Model.Category</dd>
+        </dl>
+
+        <form method="post" action="@Url.Action("AddToCart", "Cart", new { id = Model.ProductId })">
+            <input type="submit" value="Add to Cart">
+        </form>
+    </div>
+</div>
+

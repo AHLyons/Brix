@@ -1,5 +1,37 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model List<NewProduct>
+
+<table class="table table-bordered">
+    <thead class="fw-bold">
+        <tr>
+            <td>Name</td>
+            <td>Year</td>
+            <td>NumParts</td>
+            <td>ImgLink</td>
+            <td>PrimaryColor</td>
+            <td>SecondaryColor</td>
+            <td>Description</td>
+            <td>Category</td>
+        </tr>
+    </thead>
+
+    @foreach (var m in Model)  
+    {
+        <tbody>
+            <tr>
+                <td>@m.Name?.CategoryName</td>
+                <td>@m.Year</td>
+                <td>@m.NumParts</td>
+                <td>@m.ImgLink</td>
+                <td>@m.PrimaryColor</td>
+                <td>@m.SecondaryColor</td>
+                <td>@m.Description</td>
+                <td>@m.Category</td>
+
+
+                <td><a class="btn btn-info" asp-controller="Home" asp-action="Edit" asp-route-id="@m.ProductId">Edit</a></td>
+                <td><a class="btn btn-danger" asp-controller="Home" asp-action="Delete" asp-route-id="@m.ProductId">Delete</a></td>
+            </tr>
+        </tbody>
+    }
+
+</table>
