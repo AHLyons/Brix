@@ -93,9 +93,31 @@ namespace Brix.Controllers
         }
 
 
-        public IActionResult Products()
+        public IActionResult Products(int pageNum)
         {
-            return View();
+            int pageSize = 10;
+            if (pageNum < 1)
+            {
+                pageNum = 1;
+            }
+
+            var blah = new LegosListViewModel
+            {
+                Products = _repo.Products
+                    .OrderBy(x => x.ProductId)
+                    .Skip((pageNum - 1) * pageSize)
+                    .Take(pageSize),
+
+                PaginationInfo = new PaginationInfo
+                {
+                    CurrentPage = pageNum,
+                    ItemsPerPage = pageSize,
+                    TotalItems = _repo.Products.Count()
+                }
+
+            };
+
+            return View(blah);
         }
 
         public IActionResult OrderConfirmation()
