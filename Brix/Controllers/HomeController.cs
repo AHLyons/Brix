@@ -16,12 +16,14 @@ namespace Brix.Controllers
         private ILegoStoreRepository _repo;
         private InferenceSession _session;
         private ILogger<HomeController> _logger;
+        private BrixDatabaseContext _context;
 
-        public HomeController(ILegoStoreRepository temp, ILogger<HomeController> logger, InferenceSession session)
+        public HomeController(ILegoStoreRepository temp, ILogger<HomeController> logger, InferenceSession session, BrixDatabaseContext context)
         {
             _repo = temp;
             _logger = logger;
             _session = session;
+            _context = context;
 
             try
             {
@@ -32,9 +34,10 @@ namespace Brix.Controllers
             {
                 _logger.LogError($"Error loading the ONNX model: {ex.Message}");
             }
+            _context = context;
         }
 
-            public IActionResult Index(int pageNum)
+        public IActionResult Index(int pageNum)
         {
             int pageSize = 10;
             if (pageNum < 1)
