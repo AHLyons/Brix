@@ -1,10 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-
-@model Brix.Models.Product
+﻿@model Brix.Models.Product
 
 @{
     ViewData["Title"] = "Edit Product";
@@ -14,15 +8,52 @@
 
 <form asp-action="Edit">
     <input type="hidden" asp-for="ProductId" />
+
     <div class="form-group">
         <label asp-for="Name" class="control-label"></label>
         <input asp-for="Name" class="form-control" />
     </div>
+
     <div class="form-group">
         <label asp-for="Year" class="control-label"></label>
-        <input asp-for="Year" class="form-control" />
+        <input asp-for="Year" type="number" class="form-control" />
     </div>
-    <!-- Repeat for other properties like NumParts, Price, ImgLink, etc. -->
+
+    <div class="form-group">
+        <label asp-for="NumParts" class="control-label"></label>
+        <input asp-for="NumParts" type="number" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Price" class="control-label"></label>
+        <input asp-for="Price" type="number" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ImgLink" class="control-label"></label>
+        <input asp-for="ImgLink" type="url" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PrimaryColor" class="control-label"></label>
+        <input asp-for="PrimaryColor" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SecondaryColor" class="control-label"></label>
+        <input asp-for="SecondaryColor" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description" class="control-label"></label>
+        <textarea asp-for="Description" rows="4" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Category" class="control-label"></label>
+        <input asp-for="Category" class="form-control" />
+    </div>
+
     <div class="form-group">
         <input type="submit" value="Save" class="btn btn-primary" />
         <a asp-action="Index" class="btn btn-secondary">Cancel</a>
@@ -34,4 +65,3 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-

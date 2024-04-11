@@ -318,11 +318,12 @@ namespace Brix.Controllers
 
             if (ModelState.IsValid)
             {
-                _repo.UpdateProduct(product); // Ensure this method is implemented in the repository
-                return RedirectToAction(nameof(Index));
+                _repo.UpdateProduct(product); // Assuming this method updates the product in your repository
+                return RedirectToAction("AEDProduct"); // Redirect to the AEDProduct view after successful edit
             }
             return View(product);
         }
+
 
         public IActionResult Delete(int? id)
         {
