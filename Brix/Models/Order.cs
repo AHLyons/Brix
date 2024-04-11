@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Brix.Models;
 
 public partial class Order
 {
+    [Key]
     public int? CustomerId { get; set; }
 
     public int? Date { get; set; }

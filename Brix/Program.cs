@@ -12,14 +12,16 @@ services.AddAuthentication().AddGoogle(googleOptions =>
     googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
 });
 
-// Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("BrixConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<IntexbrixContext>(options =>
+//Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<BrixIdentityDbContext>(options =>
+    options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<BrixDatabaseContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<IntexbrixContext>();
+    .AddEntityFrameworkStores<BrixIdentityDbContext>();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<ILegoStoreRepository, EFLegostoreRepository>();

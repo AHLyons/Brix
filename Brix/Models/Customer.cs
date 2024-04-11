@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Brix.Models;
 
 public partial class Customer
 {
+    [Key]
     public int? CustomerId { get; set; }
 
     public string? FirstName { get; set; }
