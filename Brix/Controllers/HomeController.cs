@@ -4,43 +4,140 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Brix.Models.ViewModels;
 using SQLitePCL;
+using Microsoft.ML.OnnxRuntime;
+using Microsoft.ML;
+using Microsoft.ML.OnnxRuntime.Tensors;
+using Microsoft.EntityFrameworkCore;
+using Elfie.Serialization;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Brix.Controllers
 {
     public class HomeController : Controller
     {
         private ILegoStoreRepository _repo;
+        private readonly InferenceSession _session;
+        private readonly string _onnxModelPath;
 
-        public HomeController(ILegoStoreRepository temp)
+        public HomeController(ILegoStoreRepository temp, InferenceSession session, IHostEnvironment hostEnvironment)
         {
             _repo = temp;
+            _session = session;
+
+            _onnxModelPath = System.IO.Path.Combine(hostEnvironment.ContentRootPath, "decision_tree_model-3.onnx");
+            System.IO.Path.Combine(hostEnvironment.ContentRootPath, "decision_tree_model-3.onnx");
+
+            _session = new InferenceSession(_onnxModelPath);
+
+
+
+            try
+            {
+                _session = new InferenceSession("./decision_tree_model-3.onnx");
+                //_logger.LogInformation("ONNX model loaded successfully.");
+                Console.WriteLine("ONNX model loaded successfully.");
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError($"Error loading the ONNX model: {ex.Message}");
+                Console.WriteLine($"Error loading the ONNX model: {ex.Message}");
+            }
         }
 
-        public IActionResult Index(int pageNum)
+        //public IActionResult Index(int pageNum)
+        //{
+        //    int pageSize = 10;
+        //    if (pageNum < 1)
+        //    {
+        //        pageNum = 1;
+        //    }
+
+        //    var blah = new LegosListViewModel
+        //    {
+        //        Products = _repo.Products
+        //            .OrderBy(x => x.ProductId)
+        //            .Skip((pageNum - 1) * pageSize)
+        //            .Take(pageSize),
+
+        //        PaginationInfo = new PaginationInfo
+        //        {
+        //            CurrentPage = pageNum,
+        //            ItemsPerPage = pageSize,
+        //            TotalItems = _repo.Products.Count()
+        //        }
+
+        //    };
+
+        //    return View(blah);
+        //}
+
+        public IActionResult FraudCheck()
         {
-            int pageSize = 10;
-            if (pageNum < 1)
-            {
-                pageNum = 1;
-            }
+            var records = _repo.Orders
+                .OrderByDescending(x => x.Date)
+                .Take(20)
+                .ToList();  // Fetch all records
+            var predictions = new List<FraudPrediction>();  // Your ViewModel for the view
 
-            var blah = new LegosListViewModel
-            {
-                Products = _repo.Products
-                    .OrderBy(x => x.ProductId)
-                    .Skip((pageNum - 1) * pageSize)
-                    .Take(pageSize),
+            // Dictionary mapping the numeric prediction to an animal type
+            var fraud_dict = new Dictionary<int, string>
+           {
+               { 0, "Not Fraud" },
+               { 1, "Fraud" }
+           };
 
-                PaginationInfo = new PaginationInfo
+            foreach (var record in records)
+            {
+                var input = new List<float>
                 {
-                    CurrentPage = pageNum,
-                    ItemsPerPage = pageSize,
-                    TotalItems = _repo.Products.Count()
+                    (float)record.Date,
+                    (float)record.Time,
+                    (float)record.Amount,
+                    1,
+                    record.DayOfWeek == "Mon" ? 1 : 0,
+                    record.DayOfWeek == "Sat" ? 1 : 0,
+                    record.DayOfWeek == "Sun" ? 1 : 0,
+                    record.DayOfWeek == "Thu" ? 1 : 0,
+                    record.DayOfWeek == "Tue" ? 1 : 0,
+                    record.DayOfWeek == "Wed" ? 1 : 0,
+                    record.EntryMode == "PIN" ? 1 : 0,
+                    record.EntryMode == "Tap" ? 1 : 0,
+                    record.TypeOfTransaction == "Online" ? 1 : 0,
+                    record.TypeOfTransaction == "POS" ? 1 : 0,
+                    record.CountryOfTransaction == "India" ? 1 : 0,
+                    record.CountryOfTransaction == "Russia" ? 1 : 0,
+                    record.CountryOfTransaction == "USA" ? 1 : 0,
+                    record.CountryOfTransaction == "United Kingdom" ? 1 : 0,
+                    record.ShippingAddress == "India" ? 1 : 0,
+                    record.ShippingAddress == "Russia" ? 1 : 0,
+                    record.ShippingAddress == "USA" ? 1 : 0,
+                    record.ShippingAddress == "United Kingdom" ? 1 : 0,
+                    record.Bank == "HSBC" ? 1 : 0,
+                    record.Bank == "Halifax" ? 1 : 0,
+                    record.Bank == "Lloyds" ? 1 : 0,
+                    record.Bank == "Metro" ? 1 : 0,
+                    record.Bank == "Monzo" ? 1 : 0,
+                    record.Bank == "RBS" ? 1 : 0,
+                    record.TypeOfCard == "Visa" ? 1 : 0
+                };
+                var inputTensor = new DenseTensor<float>(input.ToArray(), new[] { 1, input.Count });
+
+                var inputs = new List<NamedOnnxValue>
+               {
+                   NamedOnnxValue.CreateFromTensor("float_input", inputTensor)
+               };
+
+                string predictionResult;
+                using (var results = _session.Run(inputs))
+                {
+                    var prediction = results.FirstOrDefault(item => item.Name == "output_label")?.AsTensor<long>().ToArray();
+                    predictionResult = prediction != null && prediction.Length > 0 ? fraud_dict.GetValueOrDefault((int)prediction[0], "Unknown") : "Error in prediction";
                 }
 
-            };
+                predictions.Add(new FraudPrediction { Orders = record, Prediction = predictionResult }); // Adds the fraud information and prediction for that fraud to FraudPrediction viewmodel
+            }
 
-            return View(blah);
+            return View(predictions);
         }
 
         public IActionResult Privacy()
@@ -70,9 +167,38 @@ namespace Brix.Controllers
             return View();
         }
 
-        public IActionResult FraudCheck()
+        //public IActionResult FraudCheck()
+        //{
+        //    return View();
+        //}
+        //public IActionResult AEDProduct()
+        //{
+        //    var products = _repo.Products.ToList(); // Assuming _repo.Products is an IQueryable<Product>
+        //    return View(products);
+        //}
+
+        [HttpGet]
+        public IActionResult NewProduct()
         {
-            return View();
+            return View(new Product()); // Returns an empty form
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> NewProduct(Product product) // Mark this method as async
+        {
+            if (ModelState.IsValid)
+            {
+                await _repo.NewProduct(product); // Await the async NewProduct method
+
+                return RedirectToAction("AEDProduct"); // Redirect to the AEDProduct view
+            }
+            return View(product);
+        }
+
+        public IActionResult AEDProduct()
+        {
+            var products = _repo.Products.ToList();
+            return View(products);
         }
 
         public IActionResult ProductDetails(int? id)
@@ -92,9 +218,6 @@ namespace Brix.Controllers
             return View(product);
         }
 
-
-        // In HomeController.cs
-        // In HomeController.cs
         public IActionResult Products(int pageNum, string category, string color, int pageSize = 10)
         {
             if (pageNum < 1)
@@ -140,22 +263,92 @@ namespace Brix.Controllers
         }
 
 
-        [HttpPost]
-        public IActionResult NewProduct(Product product)
-        {
-            if (ModelState.IsValid)
-            {
-                _repo.NewProduct(product);
-                return RedirectToAction("Index");
-            }
-            return View("Products", _repo.Products);
-        }
+        //[HttpPost]
+        //public IActionResult NewProduct(Product product)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _repo.NewProduct(product);
+        //        return RedirectToAction("Index");
+        //    }
+        //    return View("Products", _repo.Products);
+        //}
 
 
 
         public IActionResult OrderConfirmation()
         {
             return View();
+        }
+
+        //[HttpPost]
+        //public IActionResult NewProduct(Product product)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _repo.NewProduct(product);
+        //        return RedirectToAction("Index");
+        //    }
+        //    return View(product);
+        //}
+
+        public IActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = _repo.Products.FirstOrDefault(p => p.ProductId == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, Product product)
+        {
+            if (id != product.ProductId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _repo.UpdateProduct(product); // Ensure this method is implemented in the repository
+                return RedirectToAction(nameof(Index));
+            }
+            return View(product);
+        }
+
+        public IActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = _repo.Products.FirstOrDefault(p => p.ProductId == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var product = _repo.Products.FirstOrDefault(p => p.ProductId == id);
+            if (product != null)
+            {
+                _repo.DeleteProduct(product); // Ensure this method is implemented in the repository
+            }
+            return RedirectToAction(nameof(Index));
         }
 
     }

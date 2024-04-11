@@ -2,15 +2,12 @@ using Brix.Models;
 using Brix.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.ML.OnnxRuntime;
 
-
-
-    public class Program
+public class Program
+{
+    public static async Task Main(string[] args)
     {
-
-        public static async Task Main(string[] args)
-        {
-
         var builder = WebApplication.CreateBuilder(args);
         var services = builder.Services;
         var configuration = builder.Configuration;
@@ -21,37 +18,35 @@ using Microsoft.EntityFrameworkCore;
             googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
         });
 
-        //Add services to the container.
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-        builder.Services.AddDbContext<BrixIdentityDbContext>(options =>
+        services.AddDbContext<BrixIdentityDbContext>(options =>
             options.UseSqlServer(connectionString));
-        builder.Services.AddDbContext<BrixDatabaseContext>(options =>
+        services.AddDbContext<BrixDatabaseContext>(options =>
             options.UseSqlServer(connectionString));
-        builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+        services.AddDatabaseDeveloperPageExceptionFilter();
 
-        builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true) //supposed to be false at the end?
+        services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<BrixIdentityDbContext>();
 
-        builder.Services.AddControllersWithViews();
+        services.AddControllersWithViews();
 
-        builder.Services.AddScoped<ILegoStoreRepository, EFLegostoreRepository>();
+        services.AddScoped<ILegostoreRepository, EFLegostoreRepository>();
 
-        builder.Services.Configure<CookiePolicyOptions>(options =>
+        services.Configure<CookiePolicyOptions>(options =>
         {
-            // This lambda determines whether user consent for non-essential 
-            // cookies is needed for a given request.
             options.CheckConsentNeeded = context => true;
-
             options.MinimumSameSitePolicy = SameSiteMode.None;
-            //options.ConsentCookieValue = "true";
         });
 
-        builder.Services.AddScoped<IEmailSenderService>
+        services.AddSingleton<InferenceSession>(provider =>
+        {
+            string modelPath = "C:\\Users\\autum\\Source\\Repos\\Brix\\Brix\\decision_tree_model-3.onnx";
+            return new InferenceSession(modelPath);
+        });
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseMigrationsEndPoint();
@@ -59,17 +54,13 @@ using Microsoft.EntityFrameworkCore;
         else
         {
             app.UseExceptionHandler("/Home/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
-
         app.UseCookiePolicy();
-
         app.UseRouting();
-
         app.UseAuthentication();
         app.UseAuthorization();
 
@@ -81,8 +72,6 @@ using Microsoft.EntityFrameworkCore;
         using (var scope = app.Services.CreateScope())
         {
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-
             var roles = new[] { "Admin", "Manager", "Member" };
 
             foreach (var role in roles)
@@ -95,29 +84,21 @@ using Microsoft.EntityFrameworkCore;
         using (var scope = app.Services.CreateScope())
         {
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-
             string email = "admin@admin.com";
             string password = "Test1234,";
 
-            if(await userManager.FindByEmailAsync(email) == null)
+            if (await userManager.FindByEmailAsync(email) == null)
             {
                 var user = new IdentityUser();
                 user.UserName = email;
                 user.Email = email;
 
                 await userManager.CreateAsync(user, password);
-
                 await userManager.AddToRoleAsync(user, "admin");
             }
         }
 
         app.Run();
-
     }
-
-    }
-
-
-
-
+}
 
