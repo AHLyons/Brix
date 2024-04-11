@@ -8,6 +8,7 @@ using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using Microsoft.EntityFrameworkCore;
+using Elfie.Serialization;
 
 namespace Brix.Controllers
 {
@@ -27,7 +28,7 @@ namespace Brix.Controllers
 
             try
             {
-                _session = new InferenceSession("C:/Users/carte/Documents-Local/ZooC#/Zoo/decision_tree_model.onnx");
+                _session = new InferenceSession("C:\\Users\\autum\\Source\\Repos\\Brix\\Brix\\decision_tree_model-3.onnx");
                 _logger.LogInformation("ONNX model loaded successfully.");
             }
             catch (Exception ex)
