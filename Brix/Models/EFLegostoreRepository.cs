@@ -2,9 +2,9 @@
 {
     public class EFLegostoreRepository : ILegoStoreRepository
     {
-        private IntexbrixContext _context;
+        private BrixDatabaseContext _context;
 
-        public EFLegostoreRepository(IntexbrixContext temp) 
+        public EFLegostoreRepository(BrixDatabaseContext temp) 
         { 
             _context = temp;
         }
