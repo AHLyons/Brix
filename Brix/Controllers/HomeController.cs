@@ -7,6 +7,7 @@ using SQLitePCL;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML;
 using Microsoft.ML.OnnxRuntime.Tensors;
+using Microsoft.EntityFrameworkCore;
 
 namespace Brix.Controllers
 {
@@ -58,6 +59,71 @@ namespace Brix.Controllers
             };
 
             return View(blah);
+        }
+
+        public IActionResult ShowPredictions()
+        {
+            var records = _context.Orders.ToList();  // Fetch all records
+            var predictions = new List<FraudPrediction>();  // Your ViewModel for the view
+
+            // Dictionary mapping the numeric prediction to an animal type
+            var fraud_dict = new Dictionary<int, string>
+           {
+               { 0, "Not Fraud" },
+               { 1, "Fraud" }
+           };
+
+            foreach (var record in records)
+            {
+                var input = new List<string>
+                {
+                    record.Date.ToString(),
+                    record.Time.ToString(),
+                    record.Amount.ToString(),
+                    record.DayOfWeek == "Mon" ? "1" : "0",
+                    record.DayOfWeek == "Sat" ? "1" : "0",
+                    record.DayOfWeek == "Sun" ? "1" : "0",
+                    record.DayOfWeek == "Thu" ? "1" : "0",
+                    record.DayOfWeek == "Tue" ? "1" : "0",
+                    record.DayOfWeek == "Wed" ? "1" : "0",
+                    record.EntryMode == "PIN" ? "1" : "0",
+                    record.EntryMode == "Tap" ? "1" : "0",
+                    record.TypeOfTransaction == "Online" ? "1" : "0",
+                    record.TypeOfTransaction == "POS" ? "1" : "0",
+                    record.CountryOfTransaction == "India" ? "1" : "0",
+                    record.CountryOfTransaction == "Russia" ? "1" : "0",
+                    record.CountryOfTransaction == "USA" ? "1" : "0",
+                    record.CountryOfTransaction == "United Kingdom" ? "1" : "0",
+                    record.ShippingAddress == "India" ? "1" : "0",
+                    record.ShippingAddress == "Russia" ? "1" : "0",
+                    record.ShippingAddress == "USA" ? "1" : "0",
+                    record.ShippingAddress == "United Kingdom" ? "1" : "0",
+                    record.Bank == "HSBC" ? "1" : "0",
+                    record.Bank == "Halifax" ? "1" : "0",
+                    record.Bank == "Lloyds" ? "1" : "0",
+                    record.Bank == "Metro" ? "1" : "0",
+                    record.Bank == "Monzo" ? "1" : "0",
+                    record.Bank == "RBS" ? "1" : "0",
+                    record.TypeOfCard == "Visa" ? "1" : "0"
+                };
+                var inputTensor = new DenseTensor<string>(input.ToArray(), new[] { 1, input.Count });
+
+                var inputs = new List<NamedOnnxValue>
+               {
+                   NamedOnnxValue.CreateFromTensor("float_input", inputTensor)
+               };
+
+                string predictionResult;
+                using (var results = _session.Run(inputs))
+                {
+                    var prediction = results.FirstOrDefault(item => item.Name == "output_label")?.AsTensor<long>().ToArray();
+                    predictionResult = prediction != null && prediction.Length > 0 ? fraud_dict.GetValueOrDefault((int)prediction[0], "Unknown") : "Error in prediction";
+                }
+
+                predictions.Add(new FraudPrediction { Fraud = record, Prediction = predictionResult }); // Adds the fraud information and prediction for that fraud to FraudPrediction viewmodel
+            }
+
+            return View(predictions);
         }
 
         public IActionResult Privacy()
