@@ -201,13 +201,6 @@ namespace Brix.Controllers
             return View(products);
         }
 
-
-
-        public IActionResult FraudCheck()
-        {
-            return View();
-        }
-
         public IActionResult ProductDetails(int? id)
         {
             if (id == null)
