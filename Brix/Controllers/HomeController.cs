@@ -93,32 +93,53 @@ namespace Brix.Controllers
         }
 
 
-        public IActionResult Products(int pageNum)
+        // In HomeController.cs
+        // In HomeController.cs
+        public IActionResult Products(int pageNum, string category, string color, int pageSize = 10)
         {
-            int pageSize = 10;
             if (pageNum < 1)
             {
                 pageNum = 1;
             }
 
-            var blah = new LegosListViewModel
+            var categories = _repo.Products.Select(p => p.Category).Distinct().ToList();
+            var primaryColors = _repo.Products.Select(p => p.PrimaryColor).Distinct().ToList();
+
+            var productsQuery = _repo.Products.AsQueryable();
+
+            if (!string.IsNullOrEmpty(category))
             {
-                Products = _repo.Products
+                productsQuery = productsQuery.Where(p => p.Category == category);
+            }
+
+            if (!string.IsNullOrEmpty(color))
+            {
+                productsQuery = productsQuery.Where(p => p.PrimaryColor == color);
+            }
+
+            var viewModel = new LegosListViewModel
+            {
+                Products = productsQuery
                     .OrderBy(x => x.ProductId)
                     .Skip((pageNum - 1) * pageSize)
                     .Take(pageSize),
-
                 PaginationInfo = new PaginationInfo
                 {
                     CurrentPage = pageNum,
                     ItemsPerPage = pageSize,
-                    TotalItems = _repo.Products.Count()
-                }
-
+                    TotalItems = productsQuery.Count()
+                },
+                CurrentCategory = category,
+                CurrentColor = color,
+                PageSize = pageSize,
+                Categories = categories,
+                PrimaryColors = primaryColors
             };
 
-            return View(blah);
+            return View(viewModel);
         }
+
+
 
         public IActionResult OrderConfirmation()
         {
