@@ -2,67 +2,119 @@ using Brix.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
-var services = builder.Services;
-var configuration = builder.Configuration;
 
-services.AddAuthentication().AddGoogle(googleOptions =>
-{
-    googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
-    googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-});
 
-//Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<BrixIdentityDbContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddDbContext<BrixDatabaseContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+    public class Program
+    {
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<BrixIdentityDbContext>();
-builder.Services.AddControllersWithViews();
+        public static async Task Main(string[] args)
+        {
 
-builder.Services.AddScoped<ILegoStoreRepository, EFLegostoreRepository>();
+        var builder = WebApplication.CreateBuilder(args);
+        var services = builder.Services;
+        var configuration = builder.Configuration;
 
-builder.Services.Configure<CookiePolicyOptions>(options =>
-{
-    // This lambda determines whether user consent for non-essential 
-    // cookies is needed for a given request.
-    options.CheckConsentNeeded = context => true;
+        services.AddAuthentication().AddGoogle(googleOptions =>
+        {
+            googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+            googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+        });
 
-    options.MinimumSameSitePolicy = SameSiteMode.None;
-    //options.ConsentCookieValue = "true";
-});
+        //Add services to the container.
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+        builder.Services.AddDbContext<BrixIdentityDbContext>(options =>
+            options.UseSqlServer(connectionString));
+        builder.Services.AddDbContext<BrixDatabaseContext>(options =>
+            options.UseSqlServer(connectionString));
+        builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-var app = builder.Build();
+        builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true) //supposed to be false at the end?
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<BrixIdentityDbContext>();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseMigrationsEndPoint();
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+        builder.Services.AddControllersWithViews();
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+        builder.Services.AddScoped<ILegoStoreRepository, EFLegostoreRepository>();
 
-app.UseCookiePolicy();
+        builder.Services.Configure<CookiePolicyOptions>(options =>
+        {
+            // This lambda determines whether user consent for non-essential 
+            // cookies is needed for a given request.
+            options.CheckConsentNeeded = context => true;
 
-app.UseRouting();
+            options.MinimumSameSitePolicy = SameSiteMode.None;
+            //options.ConsentCookieValue = "true";
+        });
 
-app.UseAuthentication();
-app.UseAuthorization();
+        var app = builder.Build();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseMigrationsEndPoint();
+        }
+        else
+        {
+            app.UseExceptionHandler("/Home/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+        }
 
-app.Run();
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+
+        app.UseCookiePolicy();
+
+        app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
+        app.MapRazorPages();
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+
+            var roles = new[] { "Admin", "Manager", "Member" };
+
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                    await roleManager.CreateAsync(new IdentityRole(role));
+            }
+        }
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+            string email = "admin@admin.com";
+            string password = "Test1234,"
+
+            if(await userManager.FindByEmailAsync(email) == null)
+            {
+                var user = new IdentityUser();
+                user.UserName = email;
+                user.Email = email;
+
+                await userManager.CreateAsync(user, password);
+
+                await userManager.AddToRoleAsync(user, "admin");
+            }
+        }
+
+        app.Run();
+
+    }
+
+    }
+
+
+
+
+
