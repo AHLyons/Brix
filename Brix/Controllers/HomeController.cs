@@ -4,19 +4,36 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Brix.Models.ViewModels;
 using SQLitePCL;
+using Microsoft.ML.OnnxRuntime;
+using Microsoft.ML;
+using Microsoft.ML.OnnxRuntime.Tensors;
 
 namespace Brix.Controllers
 {
     public class HomeController : Controller
     {
         private ILegoStoreRepository _repo;
+        private InferenceSession _session;
+        private ILogger<HomeController> _logger;
 
-        public HomeController(ILegoStoreRepository temp)
+        public HomeController(ILegoStoreRepository temp, ILogger<HomeController> logger, InferenceSession session)
         {
             _repo = temp;
+            _logger = logger;
+            _session = session;
+
+            try
+            {
+                _session = new InferenceSession("C:/Users/carte/Documents-Local/ZooC#/Zoo/decision_tree_model.onnx");
+                _logger.LogInformation("ONNX model loaded successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error loading the ONNX model: {ex.Message}");
+            }
         }
 
-        public IActionResult Index(int pageNum)
+            public IActionResult Index(int pageNum)
         {
             int pageSize = 10;
             if (pageNum < 1)
