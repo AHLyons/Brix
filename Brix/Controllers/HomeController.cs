@@ -190,10 +190,65 @@ namespace Brix.Controllers
         }
 
 
-        public IActionResult Products()
+        // In HomeController.cs
+        // In HomeController.cs
+        public IActionResult Products(int pageNum, string category, string color, int pageSize = 10)
         {
-            return View();
+            if (pageNum < 1)
+            {
+                pageNum = 1;
+            }
+
+            var categories = _repo.Products.Select(p => p.Category).Distinct().ToList();
+            var primaryColors = _repo.Products.Select(p => p.PrimaryColor).Distinct().ToList();
+
+            var productsQuery = _repo.Products.AsQueryable();
+
+            if (!string.IsNullOrEmpty(category))
+            {
+                productsQuery = productsQuery.Where(p => p.Category == category);
+            }
+
+            if (!string.IsNullOrEmpty(color))
+            {
+                productsQuery = productsQuery.Where(p => p.PrimaryColor == color);
+            }
+
+            var viewModel = new LegosListViewModel
+            {
+                Products = productsQuery
+                    .OrderBy(x => x.ProductId)
+                    .Skip((pageNum - 1) * pageSize)
+                    .Take(pageSize),
+                PaginationInfo = new PaginationInfo
+                {
+                    CurrentPage = pageNum,
+                    ItemsPerPage = pageSize,
+                    TotalItems = productsQuery.Count()
+                },
+                CurrentCategory = category,
+                CurrentColor = color,
+                PageSize = pageSize,
+                Categories = categories,
+                PrimaryColors = primaryColors
+            };
+
+            return View(viewModel);
         }
+
+
+        [HttpPost]
+        public IActionResult NewProduct(Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                _repo.NewProduct(product);
+                return RedirectToAction("Index");
+            }
+            return View("Products", _repo.Products);
+        }
+
+
 
         public IActionResult OrderConfirmation()
         {

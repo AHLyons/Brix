@@ -3,6 +3,50 @@
 }
 <h1>@ViewData["Title"]</h1>
 
+@using (Html.BeginForm("Products", "Home", FormMethod.Get))
+{
+    <div>
+        <label for="pageSize">Results per page:</label>
+        <select name="pageSize" id="pageSize">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="category">Category:</label>
+        <select name="category" id="category">
+            <option value="">All</option>
+            @foreach (var category in Model.Categories)
+            {
+                <option value="@category">@category</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label for="color">Color:</label>
+        <select name="color" id="color">
+            <option value="">All</option>
+            @foreach (var color in Model.PrimaryColors)
+            {
+                <option value="@color">@color</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit">Apply Filters</button>
+}
+
+<div class="filter-summary">
+    <strong>Current Filters:</strong>
+    <p>Results per page: @Model.PageSize</p>
+    <p>Category: @(!string.IsNullOrEmpty(Model.CurrentCategory) ? Model.CurrentCategory : "All")</p>
+    <p>Color: @(!string.IsNullOrEmpty(Model.CurrentColor) ? Model.CurrentColor : "All")</p>
+</div>
+
+
 @model LegosListViewModel
 
 <div class="products">
@@ -24,5 +68,20 @@
         </div>
     }
 
+@*     <div page-model="@Model.PaginationInfo" page-action="Products" page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark" page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>
+ *@
 
+</div>
+
+<div class="pagination">
+    @for (int i = 1; i <= Model.PaginationInfo.TotalNumPages; i++)
+    {
+        var linkClass = i == Model.PaginationInfo.CurrentPage ? "btn-primary" : "btn-outline-dark";
+        <a asp-action="Products"
+           asp-route-pageNum="@i"
+           asp-route-pageSize="@Model.PageSize"
+           asp-route-category="@Model.CurrentCategory"
+           asp-route-color="@Model.CurrentColor"
+           class="btn @linkClass">@i</a>
+    }
 </div>
