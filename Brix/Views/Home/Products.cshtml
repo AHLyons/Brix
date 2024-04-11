@@ -68,7 +68,20 @@
         </div>
     }
 
-    <div page-model="@Model.PaginationInfo" page-action="Products" page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark" page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>
+@*     <div page-model="@Model.PaginationInfo" page-action="Products" page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark" page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>
+ *@
 
+</div>
 
+<div class="pagination">
+    @for (int i = 1; i <= Model.PaginationInfo.TotalNumPages; i++)
+    {
+        var linkClass = i == Model.PaginationInfo.CurrentPage ? "btn-primary" : "btn-outline-dark";
+        <a asp-action="Products"
+           asp-route-pageNum="@i"
+           asp-route-pageSize="@Model.PageSize"
+           asp-route-category="@Model.CurrentCategory"
+           asp-route-color="@Model.CurrentColor"
+           class="btn @linkClass">@i</a>
+    }
 </div>
