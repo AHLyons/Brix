@@ -51,10 +51,12 @@
                         <dd class="col-sm-8">@Model.Product.Category</dd>
                     </dl>
 
-                    <form method="post" asp-page="/Cart">
-                        <input type="hidden" asp-for="@Model.ProductId" />
+                    <form asp-controller="Home" asp-action="AddToCart" method="post">
+                        <input type="hidden" name="productId" value="@Model.Product.ProductId" />
+                        <input type="hidden" name="returnUrl" value="@Url.Action("ProductDetails", "Home", new { id = Model.Product.ProductId })" />
                         <button type="submit" class="btn btn-primary">Add To Cart</button>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -64,7 +66,7 @@
 <!-- Existing product details code -->
 
 <!-- Recommended Products Section -->
-<h2>Recommended Products</h2>
+<h2>Similar Products</h2>
 <div class="row">
     @foreach (var recProduct in Model.RecommendedProducts)
     {

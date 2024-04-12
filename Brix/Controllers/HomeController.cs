@@ -12,6 +12,7 @@ using Elfie.Serialization;
 using Microsoft.AspNetCore.Hosting;
 using Brix.Infrastructure;
 using Brix.Services;
+using Microsoft.Identity.Client;
 
 namespace Brix.Controllers
 {
@@ -53,39 +54,50 @@ namespace Brix.Controllers
         //    _service = service;
         //}
 
-        public IActionResult Index(int pageNum)
+        public IActionResult Index()
         {
-            int pageSize = 10;
-            if (pageNum < 1)
+            var viewModel = new LegosListViewModel();
+
+            // Check if the user is logged in
+            if (User.Identity.IsAuthenticated)
             {
-                pageNum = 1;
+                // Define the specific product names
+                string[] productNames = new string[]
+                {
+            "Brick 2x2",
+            "Wheel Sets, Black",
+            "Baseplate",
+            "4.5V Small Motor With Wheels (Small Version)",
+            "Battery Box",
+            "King Tut"
+                };
+
+                // Fetch the products with the names defined above
+                viewModel.Products = _repo.Products
+                                          .Where(p => productNames.Contains(p.Name))
+                                          .OrderBy(p => p.Name) // Assuming you want to order by name, modify if necessary
+                                          .AsQueryable();
+            }
+            else
+            {
+                // For not logged in users, display top 6 products by Rating
+                viewModel.Products = _repo.Products
+                                          .OrderByDescending(p => p.LineItems.Average(l => l.Rating)) // Make sure your Product entity includes the LineItems relation
+                                          .Take(6)
+                                          .AsQueryable();
             }
 
-            var blah = new LegosListViewModel
-            {
-                Products = _repo.Products
-                    .OrderBy(x => x.ProductId)
-                    .Skip((pageNum - 1) * pageSize)
-                    .Take(pageSize),
-
-                PaginationInfo = new PaginationInfo
-                {
-                    CurrentPage = pageNum,
-                    ItemsPerPage = pageSize,
-                    TotalItems = _repo.Products.Count()
-                }
-
-            };
-
-            return View(blah);
+            return View(viewModel);
         }
+
 
         public IActionResult FraudCheck()
         {
+            // This will ensure that the most recent orders are on the table
             var records = _repo.Orders
                 .OrderByDescending(x => x.Date)
-                .Take(20)
-                .ToList();  // Fetch all records
+                .Take(40)
+                .ToList();
             var predictions = new List<FraudPrediction>();  // Your ViewModel for the view
 
             // Dictionary mapping the numeric prediction to an animal type
@@ -147,6 +159,27 @@ namespace Brix.Controllers
             }
 
             return View(predictions);
+        }
+
+        public IActionResult OrderConfirmation(List<FraudPrediction> predictions)
+        {
+            // Check if the order is flagged as fraud
+            bool isFraud = predictions.Any(prediction => prediction.Prediction == "Fraud");
+            if (isFraud)
+            {
+                // If the order is flagged as fraud, redirect to a different view
+                return RedirectToAction("ReviewedOrder");
+            }
+            else
+            {
+                // If the order is not flagged as fraud, return the order confirmation view
+                return View();
+            }
+        }
+        public IActionResult ReviewedOrder()
+        {
+            // This action method is for handling cases where the order is flagged as fraud
+            return View();
         }
 
         public IActionResult Privacy()
@@ -306,7 +339,45 @@ namespace Brix.Controllers
             return cart;
         }
 
-      
+
+        public IActionResult AddToCart(int productId, string returnUrl)
+        {
+            Product product = _repo.Products
+                .FirstOrDefault(p => p.ProductId == productId);
+
+            if (product != null)
+            {
+                Cart cart = GetCart();
+                cart.AddItem(product, 1);
+                // Save the cart object to the session
+                HttpContext.Session.SetJson("Cart", cart);
+            }
+            return RedirectToAction("ProductDetails", new { id = productId, returnUrl });
+        }
+
+        private Cart GetCart()
+        {
+            Cart cart = HttpContext.Session.GetJson<Cart>("Cart") ?? new Cart();
+            return cart;
+        }
+
+        public RedirectToActionResult RemoveFromCart(int productId, string returnUrl)
+        {
+            Product product = _repo.Products
+                .FirstOrDefault(p => p.ProductId == productId);
+
+            if (product != null)
+            {
+                Cart cart = GetCart();
+                cart.RemoveLine(product);
+                // Save the cart object to the session
+                HttpContext.Session.SetJson("Cart", cart);
+            }
+            return RedirectToAction("Cart", new { returnUrl });
+        }
+
+
+
 
 
         public IActionResult OrderConfirmation()
@@ -457,6 +528,11 @@ namespace Brix.Controllers
             }
             // Redirect to the AEDUser action to show the updated list of users
             return RedirectToAction("AEDUser");
+        }
+
+        public IActionResult CookieConsent()
+        {
+            return View(Index);
         }
 
 

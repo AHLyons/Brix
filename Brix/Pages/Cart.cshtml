@@ -1,4 +1,11 @@
 ﻿@page
+
+@{
+    Layout = "_Layout";
+}
+
+
+
 @model CartModel
 @{
 }
@@ -24,10 +31,12 @@
                 <td class="text-right">@item.Quantity</td>
                 <td class="text-right">@((item.Quantity * item.Product.Price))</td>
                 <td>
-                    <form method="post" asp-page="RemoveFromCart">
+                    <form method="post" asp-controller="Home" asp-action="RemoveFromCart">
                         <input type="hidden" name="productId" value="@item.Product.ProductId" />
+                        <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
                         <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
                     </form>
+
                 </td>
             </tr>
         }
