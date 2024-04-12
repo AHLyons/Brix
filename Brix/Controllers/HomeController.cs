@@ -120,10 +120,13 @@ namespace Brix.Controllers
             return View(blah);
         }
 
-        public IActionResult OrderConfirmation()
+        public IActionResult OrderConfirmationGood()
         {
             return View();
         }
-
+        public IActionResult OrderConfirmationBad()
+        {
+            return View();
+        }
     }
 }
