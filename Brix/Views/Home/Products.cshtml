@@ -1,87 +1,132 @@
 ﻿@{
     ViewData["Title"] = "Products";
 }
-<h1>@ViewData["Title"]</h1>
+<h1 class="text-center my-4">@ViewData["Title"]</h1>
 
-@using (Html.BeginForm("Products", "Home", FormMethod.Get))
-{
-    <div>
-        <label for="pageSize">Results per page:</label>
-        <select name="pageSize" id="pageSize">
-            <option value="5">5</option>
-            <option value="10" selected>10</option>
-            <option value="20">20</option>
-        </select>
-    </div>
-
-    <div>
-        <label for="category">Category:</label>
-        <select name="category" id="category">
-            <option value="">All</option>
-            @foreach (var category in Model.Categories)
-            {
-                <option value="@category">@category</option>
-            }
-        </select>
-    </div>
-
-    <div>
-        <label for="color">Color:</label>
-        <select name="color" id="color">
-            <option value="">All</option>
-            @foreach (var color in Model.PrimaryColors)
-            {
-                <option value="@color">@color</option>
-            }
-        </select>
-    </div>
-
-    <button type="submit">Apply Filters</button>
-}
-
-<div class="filter-summary">
-    <strong>Current Filters:</strong>
-    <p>Results per page: @Model.PageSize</p>
-    <p>Category: @(!string.IsNullOrEmpty(Model.CurrentCategory) ? Model.CurrentCategory : "All")</p>
-    <p>Color: @(!string.IsNullOrEmpty(Model.CurrentColor) ? Model.CurrentColor : "All")</p>
-</div>
-
-
-@model LegosListViewModel
-
-<div class="products">
-    @foreach (var product in Model.Products)
+<div class="container my-4">
+    @using (Html.BeginForm("Products", "Home", FormMethod.Get, new { @class = "row g-3 mb-3" }))
     {
-        <div class="product-card">
-            <a asp-controller="Home" asp-action="ProductDetails" asp-route-id="@product.ProductId">
-                @if (product.ImgLink != null)
+        <div class="col-md-4">
+            <label for="pageSize" class="form-label">Results per page:</label>
+            <select name="pageSize" id="pageSize" class="form-select">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label for="category" class="form-label">Category:</label>
+            <select name="category" id="category" class="form-select">
+                <option value="">All</option>
+                @foreach (var category in Model.Categories)
                 {
-                    <img src="@product.ImgLink" alt="Product Image" style="max-width: 200px; max-height: 200px;" />
+                    <option value="@category">@category</option>
                 }
-                else
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label for="color" class="form-label">Color:</label>
+            <select name="color" id="color" class="form-select">
+                <option value="">All</option>
+                @foreach (var color in Model.PrimaryColors)
                 {
-                    <div class="placeholder-image">No Image Available</div>
+                    <option value="@color">@color</option>
                 }
-                <h3>@product.Name</h3>
-            </a>
-            <p>$@product.Price</p>
+            </select>
+        </div>
+
+        <div class="col-12 text-center">
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
         </div>
     }
 
-@*     <div page-model="@Model.PaginationInfo" page-action="Products" page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark" page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>
- *@
+    <div class="filter-summary mb-3 d-flex align-items-center">
+        <strong>Current Filters:</strong>
+        <p class="mb-0 mx-2">Results per page: @Model.PageSize</p>
+        <p class="mb-0 mx-2">Category: @(!string.IsNullOrEmpty(Model.CurrentCategory) ? Model.CurrentCategory : "All")</p>
+        <p class="mb-0 mx-2">Color: @(!string.IsNullOrEmpty(Model.CurrentColor) ? Model.CurrentColor : "All")</p>
+    </div>
 
+
+    <div class="row row-cols-1 row-cols-md-3 g-4 product-card">
+        @foreach (var product in Model.Products)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <a asp-controller="Home" asp-action="ProductDetails" asp-route-id="@product.ProductId" class="text-center">
+                        @if (product.ImgLink != null)
+                        {
+                            <img src="@product.ImgLink" alt="Product Image" class="card-img-top" />
+                        }
+                        else
+                        {
+                            <div class="placeholder-image">No Image Available</div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text">$@product.Price</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="pagination d-flex justify-content-center my-4">
+        @for (int i = 1; i <= Model.PaginationInfo.TotalNumPages; i++)
+        {
+            var linkClass = i == Model.PaginationInfo.CurrentPage ? "btn-primary" : "btn-outline-dark";
+            <a asp-action="Products"
+               asp-route-pageNum="@i"
+               asp-route-pageSize="@Model.PageSize"
+               asp-route-category="@Model.CurrentCategory"
+               asp-route-color="@Model.CurrentColor"
+               class="btn @linkClass m-1">@i</a>
+        }
+    </div>
 </div>
 
-<div class="pagination">
-    @for (int i = 1; i <= Model.PaginationInfo.TotalNumPages; i++)
-    {
-        var linkClass = i == Model.PaginationInfo.CurrentPage ? "btn-primary" : "btn-outline-dark";
-        <a asp-action="Products"
-           asp-route-pageNum="@i"
-           asp-route-pageSize="@Model.PageSize"
-           asp-route-category="@Model.CurrentCategory"
-           asp-route-color="@Model.CurrentColor"
-           class="btn @linkClass">@i</a>
+<style>
+    .card-img-top {
+        max-width: 100%;
+        max-height: 200px;
+        object-fit: contain; /* Prevent image stretching */
     }
-</div>
+
+    .card {
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Card shadow */
+        transition: 0.3s; /* Smooth transition for hover effect */
+    }
+
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); /* Enhanced shadow on hover */
+        }
+
+    .product-card a {
+        color: #333; /* Black color for text links */
+        text-decoration: none; /* Remove underline from links */
+    }
+
+        .product-card a:hover,
+        .product-card a:focus {
+            text-decoration: none; /* Remove underline from links on hover/focus */
+        }
+
+    .product-card .card-title,
+    .product-card .card-text {
+        font-weight: bold; /* Make text bold */
+        text-align: left; /* Align text to the left */
+    }
+
+    .placeholder-image {
+        height: 200px; /* Fixed height for placeholder */
+        background-color: #eaeaea; /* Placeholder background color */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem; /* Placeholder text size */
+        color: #ccc; /* Placeholder text color */
+    }
+</style>

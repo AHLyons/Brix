@@ -1,16 +1,58 @@
 ﻿@{
     ViewData["Title"] = "About Me";
 }
-<div class="col-8">
+<div class="about-card">
     <h1>@ViewData["Title"]</h1>
-    <h2>(Aurora Brickwell)</h2>
+    <h2>Aurora Brickwell</h2>
+    <img src="~/lib/aurorapfp.png" alt="Aurora Brickwell" />
+    <h3>
+        I started building Legos with my dad when I was 1 month old! At age 2,
+        I finished building the 7,541 piece Millennium Falcon set.
+        I started aurorabricks in 2019, wanting to share my love for Legos.
+        I created my shop in 2023. This shop includes the most popular Lego sets ever!!!
+    </h3>
 </div>
 
-<img class="row-cols-3" src="~/lib/aurorapfp.png" />
 
-<h3 class="col-8">
-    I started building Legos with my dad when I was 1 month old! At age 2, 
-    I finished building the 7,541 piece Millennium Falcon set. 
-    I started /n@aurorabricks in 2019, wanting to share my love for Legos. 
-    I created my shop in 2023. This shop includes the most popular Lego sets ever!!!
-</h3>
+<style>
+    .about-card {
+        background-color: #fff; /* White background */
+        border-radius: 10px; /* Rounded corners for the card */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        margin: 2rem auto; /* Center the card with some margin */
+        padding: 2rem; /* Spacing inside the card */
+        max-width: 800px; /* Max card width */
+    }
+
+        .about-card h1, .about-card h2, .about-card h3 {
+            color: #333; /* Dark grey text for better readability */
+        }
+
+        .about-card h1 {
+            font-size: 2.5rem; /* Larger font size for main title */
+            margin-bottom: 0.5rem; /* Spacing below the title */
+        }
+
+        .about-card h2 {
+            font-size: 1.5rem; /* Slightly smaller font size for subtitle */
+            font-weight: normal; /* Normal font weight for subtitle */
+            color: #555; /* Slightly lighter color for subtitle */
+            margin-bottom: 1rem; /* Spacing below the subtitle */
+        }
+
+        .about-card h3 {
+            font-size: 1rem; /* Standard font size for content */
+            line-height: 1.6; /* Enhanced line-height for readability */
+            color: #666; /* Light grey text for the content */
+        }
+
+        .about-card img {
+            width: 100%; /* Make the image responsive */
+            max-width: 200px; /* Maximum width of the image */
+            border-radius: 50%; /* Round shape for the profile picture */
+            margin-bottom: 1rem; /* Spacing below the image */
+            display: block; /* Ensure img takes up the whole line */
+            margin-left: auto; /* Center-align the image */
+            margin-right: auto; /* Center-align the image */
+        }
+</style>

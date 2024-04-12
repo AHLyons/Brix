@@ -1,0 +1,119 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model Brix.Models.Customer
+
+@{
+    ViewData["Title"] = "Add New Customer";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="NewUser" method="post">
+    <div class="form-group">
+        <label asp-for="FirstName" class="control-label">First Name</label>
+        <input asp-for="FirstName" class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="LastName" class="control-label">Last Name</label>
+        <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="BirthDate" class="control-label">Birth Date</label>
+        <input asp-for="BirthDate" class="form-control" />
+        <span asp-validation-for="BirthDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CountryOfResidence" class="control-label">Country of Residence</label>
+        <input asp-for="CountryOfResidence" class="form-control" />
+        <span asp-validation-for="CountryOfResidence" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Gender" class="control-label">Gender</label>
+        <select asp-for="Gender" class="form-control">
+            <option value="">Select...</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+        <span asp-validation-for="Gender" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Age" class="control-label">Age</label>
+        <input asp-for="Age" type="number" class="form-control" />
+        <span asp-validation-for="Age" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+@section Scripts {
+    Html.RenderPartialAsync("_ValidationScriptsPartial")
+}
+<style>
+    .container-form {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+    .container-form h1 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .container-form form {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .container-form form label {
+        font-weight: bold;
+        color: #555;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .container-form form input[type="text"],
+    .container-form form input[type="url"],
+    .container-form form input[type="number"],
+    .container-form form input[type="date"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box; /* Added to adjust input box sizing */
+    }
+
+    .container-form form button[type="submit"] {
+        background-color: #0056b3;
+        color: #ffffff;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .container-form form button[type="submit"]:hover {
+        background-color: #004494;
+    }
+
+    
+    }
+</style>
+

@@ -1,14 +1,58 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    Layout = null; // Assuming you might want this page to have no layout if it's a standalone thank you page.
 }
 
-<div>
-    <img src="c:\users\jwtay\source\repos\brix\brix\wwwroot\lib\smile banner.png" />
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .thank-you-section {
+            padding: 40px 0;
+        }
 
-<div>
-    <h2>Thanks for your order!</h2>
-    <a href="~/Index.cshtml">Keep Browsing</a>
-</div>
+            .thank-you-section img {
+                max-width: 100%;
+                height: auto;
+            }
+
+            .thank-you-section h2 {
+                margin: 20px 0;
+                font-size: 24px;
+                color: #333;
+            }
+
+            .thank-you-section a {
+                display: inline-block;
+                margin-top: 20px;
+                padding: 10px 25px;
+                background-color: #007bff;
+                color: #fff;
+                text-decoration: none;
+                border-radius: 5px;
+            }
+
+                .thank-you-section a:hover {
+                    background-color: #0056b3;
+                }
+    </style>
+</head>
+<body>
+
+    <div class="container thank-you-section">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <!-- Assuming you will host your image correctly and refer it via a correct path -->
+                <img src="~/lib/smile banner.png" alt="Thank You" />
+                <h2>Thanks for your order!</h2>
+                <a href="~/Index.cshtml" class="btn btn-primary">Keep Browsing</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
