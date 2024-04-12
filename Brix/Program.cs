@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 public class Program
 {
