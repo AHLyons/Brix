@@ -82,6 +82,7 @@ namespace Brix.Controllers
 
         public IActionResult FraudCheck()
         {
+            // This will ensure that the most recent orders are on the table
             var records = _repo.Orders
                 .OrderByDescending(x => x.Date)
                 .Take(20)
@@ -147,6 +148,27 @@ namespace Brix.Controllers
             }
 
             return View(predictions);
+        }
+
+        public IActionResult OrderConfirmation(List<FraudPrediction> predictions)
+        {
+            // Check if the order is flagged as fraud
+            bool isFraud = predictions.Any(prediction => prediction.Prediction == "Fraud");
+            if (isFraud)
+            {
+                // If the order is flagged as fraud, redirect to a different view
+                return RedirectToAction("ReviewedOrder");
+            }
+            else
+            {
+                // If the order is not flagged as fraud, return the order confirmation view
+                return View();
+            }
+        }
+        public IActionResult ReviewedOrder()
+        {
+            // This action method is for handling cases where the order is flagged as fraud
+            return View();
         }
 
         public IActionResult Privacy()
@@ -347,13 +369,6 @@ namespace Brix.Controllers
             return cart;
         }
 
-      
-
-
-        public IActionResult OrderConfirmation()
-        {
-            return View();
-        }
 
         //[HttpPost]
         //public IActionResult NewProduct(Product product)
