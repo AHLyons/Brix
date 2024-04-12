@@ -17,6 +17,7 @@ public class LegosListViewModel
 
 public class ProductDetailsViewModel
 {
+    public Product ProductId { get; set; }
     public Product Product { get; set; }
     public List<Product> RecommendedProducts { get; set; } = new List<Product>();
 }

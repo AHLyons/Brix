@@ -65,8 +65,11 @@ public class Program
             options.MinimumSameSitePolicy = SameSiteMode.None;
         });
 
+        //var onnxFilePath = Path.Combine(Directory.GetCurrentDirectory(), "decision_tree_model-3.onnx");
+        //services.AddSingleton<InferenceSession>(new InferenceSession(onnxFilePath));
+
         services.AddSingleton<InferenceSession>(
-            new InferenceSession(".\\decision_tree_model-3.onnx")
+            new InferenceSession(".\\wwwroot\\decision_tree_model-3.onnx")
         );
 
         // Configure Identity options
