@@ -166,50 +166,6 @@ namespace Brix.Controllers
             return View();
         }
 
-        ////[Authorize]
-        //[HttpGet]
-        //[Authorize] // Ensure the user is logged in
-        //public async Task<IActionResult> Manage()
-        //{
-        //    var userEmail = User.Identity.Name; // Ensure this is how you identify users
-        //    var customer = await _repo.GetCustomerByEmailAsync(userEmail);
-
-        //    if (customer == null)
-        //    {
-        //        return NotFound("User not found.");
-        //    }
-
-        //    return View(customer);
-        //}
-
-
-        //[HttpPost]
-        //[Authorize] // Ensure the user is logged in
-        //public async Task<IActionResult> EditUsers(Customer customer)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View("Manage", customer);
-        //    }
-
-        //    var userEmail = User.Identity.Name; // Or your method of identifying the user
-        //    var existingCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == userEmail);
-
-        //    if (existingCustomer == null || existingCustomer.CustomerId != customer.CustomerId)
-        //    {
-        //        return Unauthorized(); // Prevents users from editing other users' data
-        //    }
-
-        //    // Update the properties you allow to be changed
-        //    existingCustomer.FirstName = customer.FirstName;
-        //    existingCustomer.LastName = customer.LastName;
-        //    // and so on for other editable fields...
-
-        //    await _context.SaveChangesAsync();
-
-        //    return RedirectToAction("Manage"); // Or wherever you want to redirect after the update
-        //}
-
 
         [Authorize(Roles = "Admin")]
         public IActionResult AEDUser()
@@ -230,15 +186,6 @@ namespace Brix.Controllers
         }
 
 
-        //public IActionResult FraudCheck()
-        //{
-        //    return View();
-        //}
-        //public IActionResult AEDProduct()
-        //{
-        //    var products = _repo.Products.ToList(); // Assuming _repo.Products is an IQueryable<Product>
-        //    return View(products);
-        //}
 
         [HttpGet]
         public IActionResult NewProduct()
@@ -272,15 +219,36 @@ namespace Brix.Controllers
                 return NotFound();
             }
 
-            var product = _repo.Products.FirstOrDefault(p => p.ProductId == id);
+            var product = _repo.Products
+                .FirstOrDefault(p => p.ProductId == id);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            // Assume _repo.ProductRecommendations is your data source for recommendations.
+            var recommendedProductIDs = _repo.ProductRecommendations
+                .Where(pr => pr.EstProductID == id)
+                .OrderBy(pr => pr.SimilarityScore) // or however you determine 'top'
+                .Take(3)
+                .Select(pr => pr.RecommendedProductId)
+                .ToList();
+
+            var recommendedProducts = _repo.Products
+                .Where(p => recommendedProductIDs.Contains(p.ProductId))
+                .ToList();
+
+            var viewModel = new ProductDetailsViewModel
+            {
+                Product = product,
+                RecommendedProducts = recommendedProducts
+            };
+
+            return View(viewModel);
         }
+
+
 
         public IActionResult Products(int pageNum, string category, string color, int pageSize = 10)
         {
@@ -327,16 +295,7 @@ namespace Brix.Controllers
         }
 
 
-        //[HttpPost]
-        //public IActionResult NewProduct(Product product)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _repo.NewProduct(product);
-        //        return RedirectToAction("Index");
-        //    }
-        //    return View("Products", _repo.Products);
-        //}
+       
 
         public SessionCart GetCart(IServiceProvider services)
         {
@@ -355,17 +314,7 @@ namespace Brix.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public IActionResult NewProduct(Product product)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _repo.NewProduct(product);
-        //        return RedirectToAction("Index");
-        //    }
-        //    return View(product);
-        //}
-
+      
         public IActionResult Edit(int? id)
         {
             if (id == null)

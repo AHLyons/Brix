@@ -3,6 +3,8 @@
 }
 @using Brix.Infrastructure
 @model Brix.Models.Product
+@model Brix.Models.ViewModels.ProductDetailsViewModel
+
 
 <h1>@ViewData["Title"]</h1>
 
@@ -58,3 +60,30 @@
         </div>
     </div>
 </div>
+
+<!-- Existing product details code -->
+
+<!-- Recommended Products Section -->
+<h2>Recommended Products</h2>
+<div class="row">
+    @foreach (var recProduct in Model.RecommendedProducts)
+    {
+        <div class="col-sm-4">
+            <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="@recProduct.ImgLink" alt="@recProduct.Name">
+                <div class="card-body">
+                    <p class="card-text">@recProduct.Name</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <a href="@Url.Action("ProductDetails", "Home", new { id = recProduct.ProductId })" class="btn btn-sm btn-outline-secondary">View</a>
+                            <a href="@Url.Action("AddToCart", "Cart", new { id = recProduct.ProductId })" class="btn btn-sm btn-outline-secondary">Add to Cart</a>
+                        </div>
+                        <small class="text-muted">$@recProduct.Price</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
