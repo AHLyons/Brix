@@ -85,8 +85,8 @@ namespace Brix.Controllers
             // This will ensure that the most recent orders are on the table
             var records = _repo.Orders
                 .OrderByDescending(x => x.Date)
-                .Take(20)
-                .ToList();  // Fetch all records
+                .Take(40)
+                .ToList();
             var predictions = new List<FraudPrediction>();  // Your ViewModel for the view
 
             // Dictionary mapping the numeric prediction to an animal type
