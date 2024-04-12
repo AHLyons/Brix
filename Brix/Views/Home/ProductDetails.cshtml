@@ -52,7 +52,7 @@
                     </dl>
 
                     <form method="post" asp-page="/Cart">
-                        <input type="hidden" asp-for="@Model.ProductId" />
+                        <input type="hidden" asp-for="@Model.Product.ProductId" />
                         <button type="submit" class="btn btn-primary">Add To Cart</button>
                     </form>
                 </div>
