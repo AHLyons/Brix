@@ -14,3 +14,9 @@ public class LegosListViewModel
     public List<string> Categories { get; set; } = new List<string>();
     public List<string> PrimaryColors { get; set; } = new List<string>();
 }
+
+public class ProductDetailsViewModel
+{
+    public Product Product { get; set; }
+    public List<Product> RecommendedProducts { get; set; } = new List<Product>();
+}

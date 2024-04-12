@@ -2,13 +2,13 @@
 
 @{
     var consentFeature = Context.Features.Get<ITrackingConsentFeature>();
-    var showBanner = !consentFeature?.CanTrack ?? false;
+    var showBanner = !consentFeature?.CanTrack ?? true;
     var cookieString = consentFeature?.CreateConsentCookie();
 }
 
 @if (showBanner)
 {
-    <div id="cookieConsent" class="alert alert-info alert-dismissible fade show" role="alert">
+    <div id="cookieConsent" class="alert" role="alert">
         This website uses cookies to ensure you get the best experience on our website.
         <button type="button" class="accept-policy close" data-bs-dismiss="alert" aria-label="Close" data-cookie-string="@cookieString">
             <span aria-hidden="true">Accept</span>
@@ -22,12 +22,14 @@
             }, false);
         })();
     </script>
+
 }
 
 <style>
     /* Button Styling */
     #cookieConsent .accept-policy {
-        background-color: rgba(255,255,255,.5);
+        background-color: #1A4687;
+        color: #fff;
         border: none;
         border-radius: 0.25rem;
         padding: 0.375rem 0.75rem;

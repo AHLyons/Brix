@@ -12,6 +12,7 @@ using Elfie.Serialization;
 using Microsoft.AspNetCore.Hosting;
 using Brix.Infrastructure;
 using Brix.Services;
+using Microsoft.Identity.Client;
 
 namespace Brix.Controllers
 {
@@ -53,32 +54,42 @@ namespace Brix.Controllers
         //    _service = service;
         //}
 
-        public IActionResult Index(int pageNum)
+        public IActionResult Index()
         {
-            int pageSize = 10;
-            if (pageNum < 1)
+            var viewModel = new LegosListViewModel();
+
+            // Check if the user is logged in
+            if (User.Identity.IsAuthenticated)
             {
-                pageNum = 1;
+                // Define the specific product names
+                string[] productNames = new string[]
+                {
+            "Brick 2x2",
+            "Wheel Sets, Black",
+            "Baseplate",
+            "4.5V Small Motor With Wheels (Small Version)",
+            "Battery Box",
+            "King Tut"
+                };
+
+                // Fetch the products with the names defined above
+                viewModel.Products = _repo.Products
+                                          .Where(p => productNames.Contains(p.Name))
+                                          .OrderBy(p => p.Name) // Assuming you want to order by name, modify if necessary
+                                          .AsQueryable();
+            }
+            else
+            {
+                // For not logged in users, display top 6 products by Rating
+                viewModel.Products = _repo.Products
+                                          .OrderByDescending(p => p.LineItems.Average(l => l.Rating)) // Make sure your Product entity includes the LineItems relation
+                                          .Take(6)
+                                          .AsQueryable();
             }
 
-            var blah = new LegosListViewModel
-            {
-                Products = _repo.Products
-                    .OrderBy(x => x.ProductId)
-                    .Skip((pageNum - 1) * pageSize)
-                    .Take(pageSize),
-
-                PaginationInfo = new PaginationInfo
-                {
-                    CurrentPage = pageNum,
-                    ItemsPerPage = pageSize,
-                    TotalItems = _repo.Products.Count()
-                }
-
-            };
-
-            return View(blah);
+            return View(viewModel);
         }
+
 
         public IActionResult FraudCheck()
         {
@@ -188,50 +199,6 @@ namespace Brix.Controllers
             return View();
         }
 
-        ////[Authorize]
-        //[HttpGet]
-        //[Authorize] // Ensure the user is logged in
-        //public async Task<IActionResult> Manage()
-        //{
-        //    var userEmail = User.Identity.Name; // Ensure this is how you identify users
-        //    var customer = await _repo.GetCustomerByEmailAsync(userEmail);
-
-        //    if (customer == null)
-        //    {
-        //        return NotFound("User not found.");
-        //    }
-
-        //    return View(customer);
-        //}
-
-
-        //[HttpPost]
-        //[Authorize] // Ensure the user is logged in
-        //public async Task<IActionResult> EditUsers(Customer customer)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View("Manage", customer);
-        //    }
-
-        //    var userEmail = User.Identity.Name; // Or your method of identifying the user
-        //    var existingCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == userEmail);
-
-        //    if (existingCustomer == null || existingCustomer.CustomerId != customer.CustomerId)
-        //    {
-        //        return Unauthorized(); // Prevents users from editing other users' data
-        //    }
-
-        //    // Update the properties you allow to be changed
-        //    existingCustomer.FirstName = customer.FirstName;
-        //    existingCustomer.LastName = customer.LastName;
-        //    // and so on for other editable fields...
-
-        //    await _context.SaveChangesAsync();
-
-        //    return RedirectToAction("Manage"); // Or wherever you want to redirect after the update
-        //}
-
 
         [Authorize(Roles = "Admin")]
         public IActionResult AEDUser()
@@ -252,15 +219,6 @@ namespace Brix.Controllers
         }
 
 
-        //public IActionResult FraudCheck()
-        //{
-        //    return View();
-        //}
-        //public IActionResult AEDProduct()
-        //{
-        //    var products = _repo.Products.ToList(); // Assuming _repo.Products is an IQueryable<Product>
-        //    return View(products);
-        //}
 
         [HttpGet]
         public IActionResult NewProduct()
@@ -294,15 +252,36 @@ namespace Brix.Controllers
                 return NotFound();
             }
 
-            var product = _repo.Products.FirstOrDefault(p => p.ProductId == id);
+            var product = _repo.Products
+                .FirstOrDefault(p => p.ProductId == id);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            // Assume _repo.ProductRecommendations is your data source for recommendations.
+            var recommendedProductIDs = _repo.ProductRecommendations
+                .Where(pr => pr.EstProductID == id)
+                .OrderBy(pr => pr.SimilarityScore) // or however you determine 'top'
+                .Take(3)
+                .Select(pr => pr.RecommendedProductId)
+                .ToList();
+
+            var recommendedProducts = _repo.Products
+                .Where(p => recommendedProductIDs.Contains(p.ProductId))
+                .ToList();
+
+            var viewModel = new ProductDetailsViewModel
+            {
+                Product = product,
+                RecommendedProducts = recommendedProducts
+            };
+
+            return View(viewModel);
         }
+
+
 
         public IActionResult Products(int pageNum, string category, string color, int pageSize = 10)
         {
@@ -349,16 +328,7 @@ namespace Brix.Controllers
         }
 
 
-        //[HttpPost]
-        //public IActionResult NewProduct(Product product)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _repo.NewProduct(product);
-        //        return RedirectToAction("Index");
-        //    }
-        //    return View("Products", _repo.Products);
-        //}
+       
 
         public SessionCart GetCart(IServiceProvider services)
         {
@@ -370,17 +340,52 @@ namespace Brix.Controllers
         }
 
 
-        //[HttpPost]
-        //public IActionResult NewProduct(Product product)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _repo.NewProduct(product);
-        //        return RedirectToAction("Index");
-        //    }
-        //    return View(product);
-        //}
+        public IActionResult AddToCart(int productId, string returnUrl)
+        {
+            Product product = _repo.Products
+                .FirstOrDefault(p => p.ProductId == productId);
 
+            if (product != null)
+            {
+                Cart cart = GetCart();
+                cart.AddItem(product, 1);
+                // Save the cart object to the session
+                HttpContext.Session.SetJson("Cart", cart);
+            }
+            return RedirectToAction("ProductDetails", new { id = productId, returnUrl });
+        }
+
+        private Cart GetCart()
+        {
+            Cart cart = HttpContext.Session.GetJson<Cart>("Cart") ?? new Cart();
+            return cart;
+        }
+
+        public RedirectToActionResult RemoveFromCart(int productId, string returnUrl)
+        {
+            Product product = _repo.Products
+                .FirstOrDefault(p => p.ProductId == productId);
+
+            if (product != null)
+            {
+                Cart cart = GetCart();
+                cart.RemoveLine(product);
+                // Save the cart object to the session
+                HttpContext.Session.SetJson("Cart", cart);
+            }
+            return RedirectToAction("Cart", new { returnUrl });
+        }
+
+
+
+
+
+        public IActionResult OrderConfirmation()
+        {
+            return View();
+        }
+
+      
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -523,6 +528,11 @@ namespace Brix.Controllers
             }
             // Redirect to the AEDUser action to show the updated list of users
             return RedirectToAction("AEDUser");
+        }
+
+        public IActionResult CookieConsent()
+        {
+            return View(Index);
         }
 
 
