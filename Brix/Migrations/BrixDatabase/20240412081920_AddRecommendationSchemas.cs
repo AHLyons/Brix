@@ -16,7 +16,8 @@ namespace Brix.Migrations.BrixDatabase
                 {
                     CustomerId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RecommendedProduct = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    RecommendedProduct = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EstCustomerID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -30,7 +31,8 @@ namespace Brix.Migrations.BrixDatabase
                     ProductId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RecommendedProductId = table.Column<int>(type: "int", nullable: true),
-                    SimilarityScore = table.Column<float>(type: "real", nullable: true)
+                    SimilarityScore = table.Column<float>(type: "real", nullable: true),
+                    EstProductID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {

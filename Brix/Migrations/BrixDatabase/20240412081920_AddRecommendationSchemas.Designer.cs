@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Brix.Migrations.BrixDatabase
 {
     [DbContext(typeof(BrixDatabaseContext))]
-    [Migration("20240411154037_RetryingSchemas")]
-    partial class RetryingSchemas
+    [Migration("20240412081920_AddRecommendationSchemas")]
+    partial class AddRecommendationSchemas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,6 +54,25 @@ namespace Brix.Migrations.BrixDatabase
                     b.HasKey("CustomerId");
 
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("Brix.Models.CustomerProductRecommendations", b =>
+                {
+                    b.Property<int?>("CustomerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("CustomerId"));
+
+                    b.Property<int?>("EstCustomerID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RecommendedProduct")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CustomerId");
+
+                    b.ToTable("CustomerProductsRecommendations");
                 });
 
             modelBuilder.Entity("Brix.Models.LineItem", b =>
@@ -162,6 +181,28 @@ namespace Brix.Migrations.BrixDatabase
                     b.HasKey("ProductId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Brix.Models.ProductRecommendation", b =>
+                {
+                    b.Property<int?>("ProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("ProductId"));
+
+                    b.Property<int?>("EstProductID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RecommendedProductId")
+                        .HasColumnType("int");
+
+                    b.Property<float?>("SimilarityScore")
+                        .HasColumnType("real");
+
+                    b.HasKey("ProductId");
+
+                    b.ToTable("ProductRecommendations");
                 });
 #pragma warning restore 612, 618
         }
