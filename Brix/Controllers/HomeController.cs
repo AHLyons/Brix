@@ -10,6 +10,7 @@ using Microsoft.ML.OnnxRuntime.Tensors;
 using Microsoft.EntityFrameworkCore;
 using Elfie.Serialization;
 using Microsoft.AspNetCore.Hosting;
+using Brix.Infrastructure;
 using Brix.Services;
 
 namespace Brix.Controllers
@@ -228,6 +229,7 @@ namespace Brix.Controllers
             return View();
         }
 
+
         //public IActionResult FraudCheck()
         //{
         //    return View();
@@ -336,6 +338,16 @@ namespace Brix.Controllers
         //    return View("Products", _repo.Products);
         //}
 
+        public SessionCart GetCart(IServiceProvider services)
+        {
+            ISession session = services.GetRequiredService<IHttpContextAccessor>()
+                .HttpContext?.Session;
+            SessionCart cart = session?.GetJson<SessionCart>("Cart") ?? new SessionCart();
+            cart.Session = session;
+            return cart;
+        }
+
+      
 
 
         public IActionResult OrderConfirmation()
