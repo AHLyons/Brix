@@ -1,32 +1,19 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy"
-          content="base-uri 'self';
-           default-src 'self';
-           img-src data: https:
-                         'self';
-           object-src 'none';
-           script-src https://stackpath.bootstrapcdn.com/
-                      'self'
-                      'sha256-v8ZC9OgMhcnEQ/Me77/R9TlJfzOBqrMTW8e1KuqLaqc='
-                      'sha256-If//FtbPc03afjLezvWHnC3Nbu4fDM04IIzkPaf3pH0='
-                      'sha256-v8v3RKRPmN4odZ1CWM5gw80QKPCCWMcpNeOmimNL2AA='
-                      'unsafe-eval';
-           font-src fonts.gstatic.com;
-           style-src https://stackpath.bootstrapcdn.com/
-                     fonts.googleapis.com
-                     'self'
-                     'unsafe-inline';
-           upgrade-insecure-requests;">
-    <title>@ViewData["Title"] - Brix</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Brix.styles.css" asp-append-version="true" />
-</head>
-<body>
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>Brix</title>
+        <link href="~lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="~/wwwroot/css/site.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/Brix.styles.css" asp-append-version="true" />
+    </head>
+
+    <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3 header">
             <div class="container-fluid">
@@ -55,7 +42,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Manage">Manage Account</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Shared/Cart">Cart</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Cart">Cart</a>
                         </li>
 
                     </ul>
@@ -64,16 +51,8 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+        <div class="m-1 p=1">
             @RenderBody()
-        </main>
-    </div>
-
-    
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
+        </div>
+    </body>
 </html>

@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Product Details";
 }
-
+@using Brix.Infrastructure
 @model Brix.Models.Product
 
 <h1>@ViewData["Title"]</h1>
@@ -40,8 +40,10 @@
             <dd>@Model.Category</dd>
         </dl>
 
-        <form method="post" action="@Url.Action("AddToCart", "Cart", new { id = Model.ProductId })">
-            <input type="submit" value="Add to Cart">
+        <form method="post" asp-page="/Cart">
+            <input type="hidden" name="productId" value="@Model.ProductId" />
+            <input type="hidden" name="returnUrl" value="@ViewContext.HttpContext.Request.PathAndQuery()" />
+            <button type="submit" class="btn-outline-success btn-sm float-end">Add to Cart</button>
         </form>
     </div>
 </div>

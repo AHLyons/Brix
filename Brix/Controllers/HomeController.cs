@@ -10,6 +10,7 @@ using Microsoft.ML.OnnxRuntime.Tensors;
 using Microsoft.EntityFrameworkCore;
 using Elfie.Serialization;
 using Microsoft.AspNetCore.Hosting;
+using Brix.Infrastructure;
 
 namespace Brix.Controllers
 {
@@ -167,11 +168,6 @@ namespace Brix.Controllers
             return View();
         }
 
-        //public IActionResult FraudCheck()
-        //{
-        //    return View();
-        //}
-
         public IActionResult ProductDetails(int? id)
         {
             if (id == null)
@@ -237,18 +233,25 @@ namespace Brix.Controllers
         }
 
 
-        [HttpPost]
-        public IActionResult NewProduct(Product product)
+        //[HttpPost]
+        //public IActionResult NewProduct(Product product)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _repo.NewProduct(product);
+        //        return RedirectToAction("Index");
+        //    }
+        //    return View("Products", _repo.Products);
+        //}
+
+        public SessionCart GetCart(IServiceProvider services)
         {
-            if (ModelState.IsValid)
-            {
-                _repo.NewProduct(product);
-                return RedirectToAction("Index");
-            }
-            return View("Products", _repo.Products);
+            ISession session = services.GetRequiredService<IHttpContextAccessor>()
+                .HttpContext?.Session;
+            SessionCart cart = session?.GetJson<SessionCart>("Cart") ?? new SessionCart();
+            cart.Session = session;
+            return cart;
         }
-
-
 
         public IActionResult OrderConfirmation()
         {
