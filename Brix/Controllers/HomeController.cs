@@ -12,6 +12,7 @@ using Elfie.Serialization;
 using Microsoft.AspNetCore.Hosting;
 using Brix.Infrastructure;
 using Brix.Services;
+using Microsoft.Identity.Client;
 
 namespace Brix.Controllers
 {
@@ -510,7 +511,10 @@ namespace Brix.Controllers
             return RedirectToAction("AEDUser");
         }
 
-
+        public IActionResult CookieConsent()
+        {
+            return View(Index);
+        }
 
 
     }
