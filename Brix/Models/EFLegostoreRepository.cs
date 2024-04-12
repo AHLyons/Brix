@@ -15,6 +15,8 @@ namespace Brix.Models
         public IQueryable<Product> Products => _context.Products;
         public IQueryable<Order> Orders => _context.Orders;
         public IQueryable<FraudPrediction> FraudPredictions => _context.FraudPredictions;
+        public IQueryable<Customer> Customers => _context.Customers;
+
 
         // Add a new product to the database
         public async Task NewProduct(Product product)
@@ -40,6 +42,30 @@ namespace Brix.Models
                 _context.Products.Attach(product);
             }
             _context.Products.Remove(product);
+            _context.SaveChanges();
+        }
+
+        // Implement Customer CRUD operations
+        public async Task NewCustomer(Customer customer)
+        {
+            await _context.Customers.AddAsync(customer);
+            await _context.SaveChangesAsync();
+        }
+
+        public void UpdateCustomer(Customer customer)
+        {
+            _context.Customers.Attach(customer);
+            _context.Entry(customer).State = EntityState.Modified;
+            _context.SaveChanges();
+        }
+
+        public void DeleteCustomer(Customer customer)
+        {
+            if (_context.Entry(customer).State == EntityState.Detached)
+            {
+                _context.Customers.Attach(customer);
+            }
+            _context.Customers.Remove(customer);
             _context.SaveChanges();
         }
     }

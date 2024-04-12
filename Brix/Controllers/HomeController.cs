@@ -157,6 +157,13 @@ namespace Brix.Controllers
             return View();
         }
 
+        public IActionResult AEDUser()
+        {
+            var customers = _repo.Customers.ToList(); // Assuming _repo.Customers is an IQueryable<Customer>
+            return View(customers);
+        }
+
+
         public IActionResult About()
         {
             return View();
@@ -351,6 +358,93 @@ namespace Brix.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+        // Action for displaying form to add a new customer
+        [HttpGet]
+        public IActionResult NewUser()
+        {
+            return View(new Customer());
+        }
+
+        // Action to handle new customer form submission
+        [HttpPost]
+        public async Task<IActionResult> NewUser(Customer customer)
+        {
+            if (ModelState.IsValid)
+            {
+                await _repo.NewCustomer(customer);
+                return RedirectToAction("AEDUser"); // Make sure to redirect to the correct action that shows the list of customers
+            }
+            return View(customer);
+        }
+
+        // Action for displaying customer edit form
+        public IActionResult EditUsers(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var customer = _repo.Customers.FirstOrDefault(c => c.CustomerId == id);
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            return View(customer);
+        }
+
+        // Action to handle customer edit form submission
+        [HttpPost]
+        public IActionResult EditUsers(int id, Customer customer)
+        {
+            if (id != customer.CustomerId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _repo.UpdateCustomer(customer);
+                return RedirectToAction("AEDUser"); // Adjust as needed
+            }
+            return View(customer);
+        }
+
+        // Action for displaying customer delete confirmation
+        public IActionResult DeleteUsers(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var customer = _repo.Customers.FirstOrDefault(c => c.CustomerId == id);
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            return View(customer);
+        }
+
+        // Action to confirm customer deletion
+        // Action to confirm customer deletion
+        [HttpPost, ActionName("DeleteUsers")]
+        public IActionResult DeleteCustomerConfirmed(int id)
+        {
+            var customer = _repo.Customers.FirstOrDefault(c => c.CustomerId == id);
+            if (customer != null)
+            {
+                _repo.DeleteCustomer(customer);
+            }
+            // Redirect to the AEDUser action to show the updated list of users
+            return RedirectToAction("AEDUser");
+        }
+
+
+
 
     }
 }

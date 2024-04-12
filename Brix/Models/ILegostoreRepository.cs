@@ -6,6 +6,7 @@ namespace Brix.Models
     {
         public IQueryable<Product> Products { get; }
         public IQueryable<Order> Orders { get; }
+        public IQueryable<Customer> Customers { get; }
         public IQueryable<FraudPrediction> FraudPredictions { get; }
 
         // Method to add a new product
@@ -16,5 +17,10 @@ namespace Brix.Models
 
         // Method to delete a product
         void DeleteProduct(Product product);
+
+        // Add methods for Customer CRUD operations
+        Task NewCustomer(Customer customer);
+        void UpdateCustomer(Customer customer);
+        void DeleteCustomer(Customer customer);
     }
 }
