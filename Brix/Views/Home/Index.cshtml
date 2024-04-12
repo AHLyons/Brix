@@ -1,7 +1,22 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
+@if (User.IsInRole("Admin"))
+{
+    <h1>Hello Aurora and team</h1>
+}
+
+<body>
+    <div class="container">
+        <partial name="_CookieConsentPartial" />
+        <main role="main" class="pb-3">
+        </main>
 <div class="banner position-relative">
     <img src="~/lib/masterbuilders.png" alt="Master Builders" class="img-fluid w-100" />
     <h1 class="position-absolute top-50 start-50 translate-middle welcome-text">Welcome, Master Builders</h1>
