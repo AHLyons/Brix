@@ -108,31 +108,39 @@ public class Program
     {
         using (var scope = app.Services.CreateScope())
         {
-            var services = scope.ServiceProvider;
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            // Example: seed roles
-            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
             var roles = new[] { "Admin", "User" };
+
             foreach (var role in roles)
             {
                 if (!await roleManager.RoleExistsAsync(role))
-                {
                     await roleManager.CreateAsync(new IdentityRole(role));
-                }
             }
+        }
 
-            // Example: seed a default user
-            var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
-            string email = "aurora@brickwell.com";
-            string password = "Aurora@1234,";
+        using (var scope = app.Services.CreateScope())
+        {
+            var userManager =
+                scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+            string email = "aurorabrickwell@gmail.com";
+            string password = "Masterbuildersunite!123";
+
             if (await userManager.FindByEmailAsync(email) == null)
             {
-                var user = new IdentityUser { UserName = email, Email = email };
+                var user = new IdentityUser();
+                user.UserName = email;
+                user.Email = email;
+                user.EmailConfirmed = true;
+
                 await userManager.CreateAsync(user, password);
+
                 await userManager.AddToRoleAsync(user, "Admin");
             }
         }
     }
+    
 }
 
 //using Brix.Models;
