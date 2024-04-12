@@ -1,4 +1,6 @@
 using Brix.Models;
+using Brix.Services;
+
 //using Brix.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -39,16 +41,40 @@ public class Program
             options.MinimumSameSitePolicy = SameSiteMode.None;
         });
 
-services.AddSingleton<InferenceSession>(
-    new InferenceSession(".\\decision_tree_model-3.onnx")
-);
+        services.AddSingleton<InferenceSession>(
+            new InferenceSession(".\\decision_tree_model-3.onnx")
+        );
 
-services.AddSingleton<InferenceSession>(provider =>
-{
-    // Provide the path to the ONNX model file
-    string modelPath = ".\\decision_tree_model-3.onnx";
-    return new InferenceSession(modelPath);
-});
+        services.AddSingleton<InferenceSession>(provider =>
+        {
+            // Provide the path to the ONNX model file
+            string modelPath = ".\\decision_tree_model-3.onnx";
+            return new InferenceSession(modelPath);
+        });
+
+        //builder.Services.AddScoped<IEmailSenderService, EmailSenderService>();
+
+        //password requirements
+        builder.Services.Configure<IdentityOptions>(options =>
+        {
+            // Password settings.
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequiredLength = 8;
+            options.Password.RequiredUniqueChars = 3;
+
+            // Lockout settings.
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.AllowedForNewUsers = true;
+
+            // User settings.
+            options.User.AllowedUserNameCharacters =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+            options.User.RequireUniqueEmail = false;
+        });
 
         var app = builder.Build();
 
@@ -77,7 +103,7 @@ services.AddSingleton<InferenceSession>(provider =>
         using (var scope = app.Services.CreateScope())
         {
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var roles = new[] { "Admin", "Manager", "Member" };
+            var roles = new[] { "Admin", "User" };
 
             foreach (var role in roles)
             {
@@ -89,8 +115,8 @@ services.AddSingleton<InferenceSession>(provider =>
         using (var scope = app.Services.CreateScope())
         {
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-            string email = "admin@admin.com";
-            string password = "Test1234,";
+            string email = "aurora@brickwell.com";
+            string password = "Aurora1234,";
 
             if (await userManager.FindByEmailAsync(email) == null)
             {

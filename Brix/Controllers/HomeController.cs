@@ -10,6 +10,7 @@ using Microsoft.ML.OnnxRuntime.Tensors;
 using Microsoft.EntityFrameworkCore;
 using Elfie.Serialization;
 using Microsoft.AspNetCore.Hosting;
+using Brix.Services;
 
 namespace Brix.Controllers
 {
@@ -43,6 +44,13 @@ namespace Brix.Controllers
                 Console.WriteLine($"Error loading the ONNX model: {ex.Message}");
             }
         }
+
+        //private readonly IEmailSenderService _service;
+
+        //public HomeController(IEmailSenderService service)
+        //{
+        //    _service = service;
+        //}
 
         public IActionResult Index(int pageNum)
         {
@@ -151,12 +159,13 @@ namespace Brix.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        //[Authorize]
+        [Authorize]
         public IActionResult Manage()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult AEDUser()
         {
             var customers = _repo.Customers.ToList(); // Assuming _repo.Customers is an IQueryable<Customer>
@@ -202,6 +211,7 @@ namespace Brix.Controllers
             return View(product);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult AEDProduct()
         {
             var products = _repo.Products.ToList();
