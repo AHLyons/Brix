@@ -24,8 +24,8 @@ namespace Brix.Controllers
             _repo = temp;
             _session = session;
 
-            _onnxModelPath = System.IO.Path.Combine(hostEnvironment.ContentRootPath, "decision_tree_model-3.onnx");
-            System.IO.Path.Combine(hostEnvironment.ContentRootPath, "decision_tree_model-3.onnx");
+            _onnxModelPath = System.IO.Path.Combine(hostEnvironment.ContentRootPath, "wwwroot", "decision_tree_model-3.onnx");
+            System.IO.Path.Combine(hostEnvironment.ContentRootPath, "wwwroot", "decision_tree_model-3.onnx");
 
             _session = new InferenceSession(_onnxModelPath);
 
@@ -151,11 +151,50 @@ namespace Brix.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        //[Authorize]
-        public IActionResult Manage()
-        {
-            return View();
-        }
+        ////[Authorize]
+        //[HttpGet]
+        //[Authorize] // Ensure the user is logged in
+        //public async Task<IActionResult> Manage()
+        //{
+        //    var userEmail = User.Identity.Name; // Ensure this is how you identify users
+        //    var customer = await _repo.GetCustomerByEmailAsync(userEmail);
+
+        //    if (customer == null)
+        //    {
+        //        return NotFound("User not found.");
+        //    }
+
+        //    return View(customer);
+        //}
+
+
+        //[HttpPost]
+        //[Authorize] // Ensure the user is logged in
+        //public async Task<IActionResult> EditUsers(Customer customer)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View("Manage", customer);
+        //    }
+
+        //    var userEmail = User.Identity.Name; // Or your method of identifying the user
+        //    var existingCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == userEmail);
+
+        //    if (existingCustomer == null || existingCustomer.CustomerId != customer.CustomerId)
+        //    {
+        //        return Unauthorized(); // Prevents users from editing other users' data
+        //    }
+
+        //    // Update the properties you allow to be changed
+        //    existingCustomer.FirstName = customer.FirstName;
+        //    existingCustomer.LastName = customer.LastName;
+        //    // and so on for other editable fields...
+
+        //    await _context.SaveChangesAsync();
+
+        //    return RedirectToAction("Manage"); // Or wherever you want to redirect after the update
+        //}
+
 
         public IActionResult AEDUser()
         {
