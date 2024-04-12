@@ -4,77 +4,83 @@
     ViewBag.Title = "Product List";
 }
 
-<h2>@ViewBag.Title</h2>
-<a href="@Url.Action("NewProduct", "Home")" class="btn btn-primary mb-3">Add New Product</a>
-<a href="@Url.Action("AEDUser", "Home")" class="btn btn-secondary mb-3">Manage Users</a>
+<div class="container mt-5">
+    <h2>@ViewBag.Title</h2>
+    <div class="d-flex justify-content-between align-items-center mt-3 mb-4">
+        <a href="@Url.Action("NewProduct", "Home")" class="btn btn-primary">Add New Product</a>
+        <a href="@Url.Action("AEDUser", "Home")" class="btn btn-outline-secondary">Manage Users</a>
+        <a href="@Url.Action("FraudCheck", "Home")" class="btn btn-warning">Fraud Check</a>
 
-<div class="table-responsive">
-    <table class="table table-bordered table-hover">
-        <thead class="thead-dark">
-            <tr>
-                <th>Name</th>
-                <th>Year</th>
-                <th>NumParts</th>
-                <th>ImgLink</th>
-                <th>PrimaryColor</th>
-                <th>SecondaryColor</th>
-                <th>Description</th>
-                <th>Category</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var m in Model)
-            {
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="thead-light">
                 <tr>
-                    <td>@m.Name</td>
-                    <td>@m.Year</td>
-                    <td>@m.NumParts</td>
-                    <td><a href="@m.ImgLink" target="_blank">View Image</a></td>
-                    <td>@m.PrimaryColor</td>
-                    <td>@m.SecondaryColor</td>
-                    <td>
-                        <button class="btn btn-link p-0" data-toggle="modal" data-target="#descriptionModal-@m.ProductId">View Description</button>
-                    </td>
-                    <td>@m.Category</td>
-                    <td>
-                        <a class="btn btn-info" asp-controller="Home" asp-action="Edit" asp-route-id="@m.ProductId">Edit</a>
-                        <a class="btn btn-danger" asp-controller="Home" asp-action="Delete" asp-route-id="@m.ProductId">Delete</a>
-                    </td>
+                    <th>Name</th>
+                    <th>Year</th>
+                    <th>NumParts</th>
+                    <th>Image</th>
+                    <th>Primary Color</th>
+                    <th>Secondary Color</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                @foreach (var m in Model)
+                {
+                    <tr>
+                        <td>@m.Name</td>
+                        <td>@m.Year</td>
+                        <td>@m.NumParts</td>
+                        <td>
+                            <a href="@m.ImgLink" target="_blank" class="btn btn-sm btn-outline-primary">View Image</a>
+                        </td>
+                        <td>@m.PrimaryColor</td>
+                        <td>@m.SecondaryColor</td>
+                        <td>
+                            <button class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#descriptionModal-@m.ProductId">View Description</button>
+                        </td>
+                        <td>@m.Category</td>
+                        <td>
+                            <a href="@Url.Action("Edit", "Home", new { id = m.ProductId })" class="btn btn-sm btn-success">Edit</a>
+                            <a href="@Url.Action("Delete", "Home", new { id = m.ProductId })" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
-<!-- Modal for Viewing Descriptions -->
-@foreach (var m in Model)
-{
-    <div class="modal fade" id="descriptionModal-@m.ProductId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Description for @m.Name</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    @m.Description
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    <!-- Modal for Viewing Descriptions -->
+    @foreach (var m in Model)
+    {
+        <div class="modal fade" id="descriptionModal-@m.ProductId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Description for @m.Name</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @m.Description
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-}
+    }
+</div>
 
 @section Scripts {
     <script>
-        // If using jQuery
-        $(function () {
-            // Initialize Bootstrap tooltips, if needed
+        $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
         });
     </script>

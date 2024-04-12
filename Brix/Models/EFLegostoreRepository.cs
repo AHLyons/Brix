@@ -68,5 +68,6 @@ namespace Brix.Models
             _context.Customers.Remove(customer);
             _context.SaveChanges();
         }
+
     }
 }

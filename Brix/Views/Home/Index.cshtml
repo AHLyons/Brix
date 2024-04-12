@@ -17,40 +17,129 @@
         <partial name="_CookieConsentPartial" />
         <main role="main" class="pb-3">
         </main>
+<div class="banner position-relative">
+    <img src="~/lib/masterbuilders.png" alt="Master Builders" class="img-fluid w-100" />
+    <h1 class="position-absolute top-50 start-50 translate-middle welcome-text">Welcome, Master Builders</h1>
+</div>
+
+<div class="container my-4">
+    <h3>Recommended For You:</h3>
+
+    @model LegosListViewModel
+
+    <div class="row">
+        @foreach (var product in Model.Products)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 product-card">
+                    <a asp-controller="Home" asp-action="ProductDetails" asp-route-id="@product.ProductId" class="text-center">
+                        @if (product.ImgLink != null)
+                        {
+                            <img src="@product.ImgLink" alt="Product Image" class="card-img-top" />
+                        }
+                        else
+                        {
+                            <div class="placeholder-image">No Image Available</div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text">$@product.Price</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
     </div>
-
-<img src="~/lib/masterbuilders.png" alt="Master Builders" />
-<h1>Welcome, Master Builders</h1>
-
-<h3>Recommended For You:</h3>
-
-@model LegosListViewModel
-
-<div class="products">
-    @foreach (var product in Model.Products)
-    {
-        <div class="product-card">
-            <a asp-controller="Home" asp-action="ProductDetails" asp-route-id="@product.ProductId">
-                @if (product.ImgLink != null)
-                {
-                    <img src="@product.ImgLink" alt="Product Image" style="max-width: 200px; max-height: 200px;" />
-                }
-                else
-                {
-                    <div class="placeholder-image">No Image Available</div>
-                }
-                <h3>@product.Name</h3>
-            </a>
-            <p>$@product.Price</p>
-        </div>
-    }
-
 
 </div>
 
+<style>
+    /* Page background */
+    body {
+        background-color: #ececec;
+    }
+
+    .banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.5); /* Black overlay with 50% opacity */
+        z-index: 1; /* Ensure the overlay is below the text */
+    }
+
+    .welcome-text {
+        font-size: 2.5rem; /* Adjust size as needed */
+        color: #FFF; /* Adjust color as needed */
+        font-weight: bold; /* Optional: if you want bold text */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2; /* Ensure the text is above the overlay */
+        /* Further style as needed */
+    }
+
+    .banner {
+        position: relative;
+        text-align: center;
+        color: white;
+    }
+
+    /* .welcome-text {
+        font-size: 2.5rem; /* Adjust size as needed */
+        color: #FFF; /* Adjust color as needed */
+        font-weight: bold; /* Optional: if you want bold text */
+        /* Further style as needed */
+    } */
+
+    .card-img-top {
+        max-width: 100%;
+        max-height: 200px;
+        object-fit: contain; /* New property to prevent image stretching */
+        margin: 15px; /* Optional: to provide spacing between the image and the card content */
+    }
+
+    .product-card a {
+        color: #333; /* Black color for text links */
+        text-decoration: none; /* Remove underline from links */
+    }
+
+        .product-card a:hover,
+        .product-card a:focus {
+            text-decoration: none; /* Remove underline from links on hover/focus */
+        }
+
+    .product-card .card-title,
+    .product-card .card-text {
+        font-weight: bold; /* Make text bold */
+        text-align: left; /* Align text to the left */
+    }
+
+    .card {
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Drop shadow */
+        background: #fff; /* White background */
+        transition: 0.3s; /* Smooth transition for hover effect */
+    }
+
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); /* Enhanced drop shadow on hover */
+        }
+
+    .placeholder-image {
+        background-color: #eaeaea;
+        height: 200px;
+        line-height: 200px;
+        text-align: center;
+        margin: 20px;
+    }
+
+    /* Additional styles */
+</style>
 
 
-@* <div page-model="@Model.PaginationInfo" page-action="Index" page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark" page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>
- *@
-
-</body>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>

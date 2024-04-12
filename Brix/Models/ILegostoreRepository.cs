@@ -22,5 +22,7 @@ namespace Brix.Models
         Task NewCustomer(Customer customer);
         void UpdateCustomer(Customer customer);
         void DeleteCustomer(Customer customer);
+
+
     }
 }
