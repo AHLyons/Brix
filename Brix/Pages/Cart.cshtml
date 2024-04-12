@@ -1,0 +1,45 @@
+﻿@page
+@model CartModel
+@{
+}
+
+<h2>Your Cart</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.cart?.Lines ?? Enumerable.Empty<Cart.CartLine>())
+        {
+            <tr>
+                <td class="text-left">@item.Product.Name</td>
+                <td class="text-center">@item.Product.Price</td>
+                <td class="text-right">@item.Quantity</td>
+                <td class="text-right">@((item.Quantity * item.Product.Price))</td>
+                <td>
+                    <form method="post" asp-page="RemoveFromCart">
+                        <input type="hidden" name="productId" value="@item.Product.ProductId" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-right">Total:</td>
+            <td>@Model.cart?.CalculateTotal()</td>
+        </tr>
+    </tfoot>
+</table>
+
+<div class="text-center">
+    <a class="btn btn-primary" href="@Model.ReturnUrl">Continue shopping</a>
+</div>
