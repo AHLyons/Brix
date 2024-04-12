@@ -31,3 +31,24 @@ body {
     font-family: 'Inter', sans-serif;
     background-color: gold;
 }
+
+.navbar {
+    background-color: #FFD700; /* Replace with the exact color code for your brand */
+}
+
+.navbar-brand img.logo {
+    /* Adjust the width and height to match your brand logo as shown in the image */
+    width: auto;
+    height: 40px; /* Adjust as needed */
+}
+
+.navbar-nav .nav-link {
+    font-size: 1rem; /* Adjust as needed */
+    color: #333333; /* Replace with the exact color code for the text */
+    margin-right: 20px; /* Spacing between nav items */
+}
+
+/* Specific style for the login nav item */
+.navbar-nav .ml-auto .nav-link {
+    font-weight: bold; /* If the Login link should be bold */
+}
