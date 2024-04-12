@@ -8,10 +8,10 @@ namespace Brix.Pages
 {
     public class CartModel : PageModel
     {
-        private ILegoStoreRepository _repo;
+        private ILegostoreRepository _repo;
         public Cart cart { get; set; }
 
-        public CartModel(ILegoStoreRepository temp, Cart cartService)
+        public CartModel(ILegostoreRepository temp, Cart cartService)
         {
             _repo = temp;
             cart = cartService;

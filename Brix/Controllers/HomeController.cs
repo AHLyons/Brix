@@ -347,7 +347,7 @@ namespace Brix.Controllers
             return cart;
         }
 
-        public IActionResult OrderConfirmation()
+      
 
 
         public IActionResult OrderConfirmation()
