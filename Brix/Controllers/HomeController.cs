@@ -53,32 +53,42 @@ namespace Brix.Controllers
         //    _service = service;
         //}
 
-        public IActionResult Index(int pageNum)
+        public IActionResult Index()
         {
-            int pageSize = 10;
-            if (pageNum < 1)
+            var viewModel = new LegosListViewModel();
+
+            // Check if the user is logged in
+            if (User.Identity.IsAuthenticated)
             {
-                pageNum = 1;
+                // Define the specific product names
+                string[] productNames = new string[]
+                {
+            "Brick 2x2",
+            "Wheel Sets, Black",
+            "Baseplate",
+            "4.5V Small Motor With Wheels (Small Version)",
+            "Battery Box",
+            "King Tut"
+                };
+
+                // Fetch the products with the names defined above
+                viewModel.Products = _repo.Products
+                                          .Where(p => productNames.Contains(p.Name))
+                                          .OrderBy(p => p.Name) // Assuming you want to order by name, modify if necessary
+                                          .AsQueryable();
+            }
+            else
+            {
+                // For not logged in users, display top 6 products by Rating
+                viewModel.Products = _repo.Products
+                                          .OrderByDescending(p => p.LineItems.Average(l => l.Rating)) // Make sure your Product entity includes the LineItems relation
+                                          .Take(6)
+                                          .AsQueryable();
             }
 
-            var blah = new LegosListViewModel
-            {
-                Products = _repo.Products
-                    .OrderBy(x => x.ProductId)
-                    .Skip((pageNum - 1) * pageSize)
-                    .Take(pageSize),
-
-                PaginationInfo = new PaginationInfo
-                {
-                    CurrentPage = pageNum,
-                    ItemsPerPage = pageSize,
-                    TotalItems = _repo.Products.Count()
-                }
-
-            };
-
-            return View(blah);
+            return View(viewModel);
         }
+
 
         public IActionResult FraudCheck()
         {
