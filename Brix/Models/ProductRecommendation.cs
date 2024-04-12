@@ -8,5 +8,7 @@ namespace Brix.Models
         public int? ProductId { get; set; }
         public int? RecommendedProductId { get; set; }
         public float? SimilarityScore { get; set; }
+
+        public int? EstProductID { get; set; }
     }
 }

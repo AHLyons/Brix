@@ -7,5 +7,6 @@ namespace Brix.Models
         [Key]
         public int? CustomerId { get; set; }
         public string? RecommendedProduct { get; set; }
+        public int? EstCustomerID { get; set; }
     }
 }
