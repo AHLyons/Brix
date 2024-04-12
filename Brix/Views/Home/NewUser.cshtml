@@ -1,0 +1,63 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model Brix.Models.Customer
+
+@{
+    ViewData["Title"] = "Add New Customer";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="NewUser" method="post">
+    <div class="form-group">
+        <label asp-for="FirstName" class="control-label">First Name</label>
+        <input asp-for="FirstName" class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="LastName" class="control-label">Last Name</label>
+        <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="BirthDate" class="control-label">Birth Date</label>
+        <input asp-for="BirthDate" class="form-control" />
+        <span asp-validation-for="BirthDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CountryOfResidence" class="control-label">Country of Residence</label>
+        <input asp-for="CountryOfResidence" class="form-control" />
+        <span asp-validation-for="CountryOfResidence" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Gender" class="control-label">Gender</label>
+        <select asp-for="Gender" class="form-control">
+            <option value="">Select...</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+        <span asp-validation-for="Gender" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Age" class="control-label">Age</label>
+        <input asp-for="Age" type="number" class="form-control" />
+        <span asp-validation-for="Age" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+@section Scripts {
+    Html.RenderPartialAsync("_ValidationScriptsPartial")
+}
+

@@ -1,38 +1,42 @@
-﻿@* @model List<NewMovie>
+﻿@model IEnumerable<Brix.Models.Customer>
 
-<table class="table table-bordered">
-    <thead class="fw-bold">
-        <tr>
-            <td>Category</td>
-            <td>Title</td>
-            <td>Year</td>
-            <td>Director</td>
-            <td>Rating</td>
-            <td>Edited</td>
-            <td>LentTo</td>
-            <td>CopiedToPlex</td>
-            <td>Notes</td>
-        </tr>
-    </thead>
+@{
+    ViewBag.Title = "Customer List";
+}
 
-    @foreach (var m in Model)
-    {
-        <tbody>
+<h2>@ViewBag.Title</h2>
+<a href="@Url.Action("NewUser", "Home")" class="btn btn-primary mb-3">Add New Customer</a>
+<a href="@Url.Action("AEDProduct", "Home")" class="btn btn-secondary mb-3">Manage Products</a>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
             <tr>
-                <td>@m.Category?.CategoryName</td>
-                <td>@m.Title</td>
-                <td>@m.Year</td>
-                <td>@m.Director</td>
-                <td>@m.Rating</td>
-                <td>@m.Edited</td>
-                <td>@m.LentTo</td>
-                <td>@m.CopiedToPlex</td>
-                <td>@m.Notes</td>
-
-                <td><a class="btn btn-info" asp-controller="Home" asp-action="Edit" asp-route-id="@m.MovieId">Edit</a></td>
-                <td><a class="btn btn-danger" asp-controller="Home" asp-action="Delete" asp-route-id="@m.MovieId">Delete</a></td>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Birth Date</th>
+                <th>Country Of Residence</th>
+                <th>Gender</th>
+                <th>Age</th>
+                <th>Actions</th>
             </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Model)
+            {
+                <tr>
+                    <td>@customer.FirstName</td>
+                    <td>@customer.LastName</td>
+                    <td>@customer.BirthDate</td>
+                    <td>@customer.CountryOfResidence</td>
+                    <td>@customer.Gender</td>
+                    <td>@customer.Age</td>
+                    <td>
+                        <a class="btn btn-info" asp-controller="Home" asp-action="EditUsers" asp-route-id="@customer.CustomerId">Edit</a>
+                        <a class="btn btn-danger" asp-controller="Home" asp-action="DeleteUsers" asp-route-id="@customer.CustomerId">Delete</a>
+                    </td>
+                </tr>
+            }
         </tbody>
-    }
-
-</table> *@
+    </table>
+</div>

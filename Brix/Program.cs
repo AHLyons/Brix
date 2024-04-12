@@ -1,5 +1,5 @@
 using Brix.Models;
-using Brix.Services;
+//using Brix.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.ML.OnnxRuntime;
@@ -39,11 +39,16 @@ public class Program
             options.MinimumSameSitePolicy = SameSiteMode.None;
         });
 
-        services.AddSingleton<InferenceSession>(provider =>
-        {
-            string modelPath = "C:\\Users\\autum\\Source\\Repos\\Brix\\Brix\\decision_tree_model-3.onnx";
-            return new InferenceSession(modelPath);
-        });
+services.AddSingleton<InferenceSession>(
+    new InferenceSession(".\\decision_tree_model-3.onnx")
+);
+
+services.AddSingleton<InferenceSession>(provider =>
+{
+    // Provide the path to the ONNX model file
+    string modelPath = ".\\decision_tree_model-3.onnx";
+    return new InferenceSession(modelPath);
+});
 
         var app = builder.Build();
 

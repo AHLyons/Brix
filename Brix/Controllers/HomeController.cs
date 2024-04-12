@@ -15,11 +15,11 @@ namespace Brix.Controllers
 {
     public class HomeController : Controller
     {
-        private ILegoStoreRepository _repo;
+        private ILegostoreRepository _repo;
         private readonly InferenceSession _session;
         private readonly string _onnxModelPath;
 
-        public HomeController(ILegoStoreRepository temp, InferenceSession session, IHostEnvironment hostEnvironment)
+        public HomeController(ILegostoreRepository temp, InferenceSession session, IHostEnvironment hostEnvironment)
         {
             _repo = temp;
             _session = session;
@@ -44,32 +44,32 @@ namespace Brix.Controllers
             }
         }
 
-        //public IActionResult Index(int pageNum)
-        //{
-        //    int pageSize = 10;
-        //    if (pageNum < 1)
-        //    {
-        //        pageNum = 1;
-        //    }
+        public IActionResult Index(int pageNum)
+        {
+            int pageSize = 10;
+            if (pageNum < 1)
+            {
+                pageNum = 1;
+            }
 
-        //    var blah = new LegosListViewModel
-        //    {
-        //        Products = _repo.Products
-        //            .OrderBy(x => x.ProductId)
-        //            .Skip((pageNum - 1) * pageSize)
-        //            .Take(pageSize),
+            var blah = new LegosListViewModel
+            {
+                Products = _repo.Products
+                    .OrderBy(x => x.ProductId)
+                    .Skip((pageNum - 1) * pageSize)
+                    .Take(pageSize),
 
-        //        PaginationInfo = new PaginationInfo
-        //        {
-        //            CurrentPage = pageNum,
-        //            ItemsPerPage = pageSize,
-        //            TotalItems = _repo.Products.Count()
-        //        }
+                PaginationInfo = new PaginationInfo
+                {
+                    CurrentPage = pageNum,
+                    ItemsPerPage = pageSize,
+                    TotalItems = _repo.Products.Count()
+                }
 
-        //    };
+            };
 
-        //    return View(blah);
-        //}
+            return View(blah);
+        }
 
         public IActionResult FraudCheck()
         {
@@ -156,6 +156,13 @@ namespace Brix.Controllers
         {
             return View();
         }
+
+        public IActionResult AEDUser()
+        {
+            var customers = _repo.Customers.ToList(); // Assuming _repo.Customers is an IQueryable<Customer>
+            return View(customers);
+        }
+
 
         public IActionResult About()
         {
@@ -318,11 +325,12 @@ namespace Brix.Controllers
 
             if (ModelState.IsValid)
             {
-                _repo.UpdateProduct(product); // Ensure this method is implemented in the repository
-                return RedirectToAction(nameof(Index));
+                _repo.UpdateProduct(product); // Assuming this method updates the product in your repository
+                return RedirectToAction("AEDProduct"); // Redirect to the AEDProduct view after successful edit
             }
             return View(product);
         }
+
 
         public IActionResult Delete(int? id)
         {
@@ -350,6 +358,93 @@ namespace Brix.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+        // Action for displaying form to add a new customer
+        [HttpGet]
+        public IActionResult NewUser()
+        {
+            return View(new Customer());
+        }
+
+        // Action to handle new customer form submission
+        [HttpPost]
+        public async Task<IActionResult> NewUser(Customer customer)
+        {
+            if (ModelState.IsValid)
+            {
+                await _repo.NewCustomer(customer);
+                return RedirectToAction("AEDUser"); // Make sure to redirect to the correct action that shows the list of customers
+            }
+            return View(customer);
+        }
+
+        // Action for displaying customer edit form
+        public IActionResult EditUsers(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var customer = _repo.Customers.FirstOrDefault(c => c.CustomerId == id);
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            return View(customer);
+        }
+
+        // Action to handle customer edit form submission
+        [HttpPost]
+        public IActionResult EditUsers(int id, Customer customer)
+        {
+            if (id != customer.CustomerId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _repo.UpdateCustomer(customer);
+                return RedirectToAction("AEDUser"); // Adjust as needed
+            }
+            return View(customer);
+        }
+
+        // Action for displaying customer delete confirmation
+        public IActionResult DeleteUsers(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var customer = _repo.Customers.FirstOrDefault(c => c.CustomerId == id);
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            return View(customer);
+        }
+
+        // Action to confirm customer deletion
+        // Action to confirm customer deletion
+        [HttpPost, ActionName("DeleteUsers")]
+        public IActionResult DeleteCustomerConfirmed(int id)
+        {
+            var customer = _repo.Customers.FirstOrDefault(c => c.CustomerId == id);
+            if (customer != null)
+            {
+                _repo.DeleteCustomer(customer);
+            }
+            // Redirect to the AEDUser action to show the updated list of users
+            return RedirectToAction("AEDUser");
+        }
+
+
+
 
     }
 }
