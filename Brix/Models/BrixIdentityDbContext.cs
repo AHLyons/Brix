@@ -34,6 +34,8 @@ namespace Brix.Models
 
         public DbSet<Order> Orders { get; set; }
 
+        public DbSet<FraudPrediction> FraudPredictions { get; set; }
+
         public DbSet<ProductRecommendation> ProductRecommendations { get; set; }
         public DbSet<CustomerProductRecommendations> CustomerProductsRecommendations { get; set; }
     }
