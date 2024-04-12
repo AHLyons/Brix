@@ -316,7 +316,44 @@ namespace Brix.Controllers
             return cart;
         }
 
-      
+        public IActionResult AddToCart(int productId, string returnUrl)
+        {
+            Product product = _repo.Products
+                .FirstOrDefault(p => p.ProductId == productId);
+
+            if (product != null)
+            {
+                Cart cart = GetCart();
+                cart.AddItem(product, 1);
+                // Save the cart object to the session
+                HttpContext.Session.SetJson("Cart", cart);
+            }
+            return RedirectToAction("ProductDetails", new { id = productId, returnUrl });
+        }
+
+        private Cart GetCart()
+        {
+            Cart cart = HttpContext.Session.GetJson<Cart>("Cart") ?? new Cart();
+            return cart;
+        }
+
+        public RedirectToActionResult RemoveFromCart(int productId, string returnUrl)
+        {
+            Product product = _repo.Products
+                .FirstOrDefault(p => p.ProductId == productId);
+
+            if (product != null)
+            {
+                Cart cart = GetCart();
+                cart.RemoveLine(product);
+                // Save the cart object to the session
+                HttpContext.Session.SetJson("Cart", cart);
+            }
+            return RedirectToAction("Cart", new { returnUrl });
+        }
+
+
+
 
 
         public IActionResult OrderConfirmation()
@@ -468,6 +505,8 @@ namespace Brix.Controllers
             // Redirect to the AEDUser action to show the updated list of users
             return RedirectToAction("AEDUser");
         }
+
+
 
 
 

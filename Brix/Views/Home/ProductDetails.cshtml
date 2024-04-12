@@ -51,10 +51,12 @@
                         <dd class="col-sm-8">@Model.Product.Category</dd>
                     </dl>
 
-                    <form method="post" asp-page="/Cart">
-                        <input type="hidden" asp-for="@Model.Product.ProductId" />
+                    <form asp-controller="Home" asp-action="AddToCart" method="post">
+                        <input type="hidden" name="productId" value="@Model.Product.ProductId" />
+                        <input type="hidden" name="returnUrl" value="@Url.Action("ProductDetails", "Home", new { id = Model.Product.ProductId })" />
                         <button type="submit" class="btn btn-primary">Add To Cart</button>
                     </form>
+
                 </div>
             </div>
         </div>
