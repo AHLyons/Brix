@@ -16,6 +16,8 @@ namespace Brix.Models
         public IQueryable<Order> Orders => _context.Orders;
         public IQueryable<FraudPrediction> FraudPredictions => _context.FraudPredictions;
         public IQueryable<Customer> Customers => _context.Customers;
+        public IQueryable<ProductRecommendation> ProductRecommendations => _context.ProductRecommendations;
+
 
 
         // Add a new product to the database

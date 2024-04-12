@@ -2,7 +2,8 @@
     ViewData["Title"] = "Product Details";
 }
 @using Brix.Infrastructure
-@model Brix.Models.Product
+@model Brix.Models.ViewModels.ProductDetailsViewModel
+
 
 <h1>@ViewData["Title"]</h1>
 
@@ -15,9 +16,9 @@
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <!-- Product Image -->
-                    @if (Model.ImgLink != null)
+                    @if (Model.Product.ImgLink != null)
                     {
-                        <img src="@Model.ImgLink" alt="Product Image" class="img-fluid">
+                        <img src="@Model.Product.ImgLink" alt="Product Image" class="img-fluid">
                     }
                     else
                     {
@@ -29,25 +30,25 @@
 
                 <div class="col-md-6">
                     <!-- Product Details -->
-                    <h2>@Model.Name</h2>
-                    <h3 class="my-3">Price: $@Model.Price</h3>
-                    <p class="mb-4">@Model.Description</p>
+                    <h2>@Model.Product.Name</h2>
+                    <h3 class="my-3">Price: $@Model.Product.Price</h3>
+                    <p class="mb-4">@Model.Product.Description</p>
 
                     <dl class="row mb-4">
                         <dt class="col-sm-4">Year</dt>
-                        <dd class="col-sm-8">@Model.Year</dd>
+                        <dd class="col-sm-8">@Model.Product.Year</dd>
 
                         <dt class="col-sm-4">Number of Parts</dt>
-                        <dd class="col-sm-8">@Model.NumParts</dd>
+                        <dd class="col-sm-8">@Model.Product.NumParts</dd>
 
                         <dt class="col-sm-4">Primary Color</dt>
-                        <dd class="col-sm-8">@Model.PrimaryColor</dd>
+                        <dd class="col-sm-8">@Model.Product.PrimaryColor</dd>
 
                         <dt class="col-sm-4">Secondary Color</dt>
-                        <dd class="col-sm-8">@Model.SecondaryColor</dd>
+                        <dd class="col-sm-8">@Model.Product.SecondaryColor</dd>
 
                         <dt class="col-sm-4">Category</dt>
-                        <dd class="col-sm-8">@Model.Category</dd>
+                        <dd class="col-sm-8">@Model.Product.Category</dd>
                     </dl>
 
                     <form method="post" asp-page="/Cart">
@@ -59,3 +60,29 @@
         </div>
     </div>
 </div>
+
+<!-- Existing product details code -->
+
+<!-- Recommended Products Section -->
+<h2>Recommended Products</h2>
+<div class="row">
+    @foreach (var recProduct in Model.RecommendedProducts)
+    {
+        <div class="col-sm-4">
+            <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="@recProduct.ImgLink" alt="@recProduct.Name">
+                <div class="card-body">
+                    <p class="card-text">@recProduct.Name</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <a href="@Url.Action("ProductDetails", "Home", new { id = recProduct.ProductId })" class="btn btn-sm btn-outline-secondary">View</a>
+                        </div>
+                        <small class="text-muted">$@recProduct.Price</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
