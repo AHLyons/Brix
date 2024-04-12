@@ -33,5 +33,8 @@ namespace Brix.Models
         public DbSet<LineItem> LineItems { get; set; }
 
         public DbSet<Order> Orders { get; set; }
+
+        public DbSet<ProductRecommendation> ProductRecommendations { get; set; }
+        public DbSet<CustomerProductRecommendations> CustomerProductsRecommendations { get; set; }
     }
 }
